@@ -17,8 +17,8 @@ class BootStrapper{
 
         var that = this;
 
-        that.dataBaseUri = utils.Utils.getParameterByName('dataBaseUri');
-        that.packageUri = utils.Utils.getParameterByName('dataUri');
+        that.dataBaseUri = utils.Utils.getQuerystringParameter('dbu');
+        that.packageUri = utils.Utils.getQuerystringParameter('du');
 
         if (that.dataBaseUri){
             that.packageUri = that.dataBaseUri + that.packageUri;
@@ -30,14 +30,17 @@ class BootStrapper{
 
             that.pkg = pkg;
 
-            // get params from querystring, these override hash ones if present.
-            var index = utils.Utils.getParameterByName('assetSequenceIndex');
+            // if on home domain, check hash params. otherwise, use
+            // embed data attributes or default to 0.
+            var isHomeDomain = utils.Utils.getQuerystringParameter('hd') == "true";
+            var isReload = utils.Utils.getQuerystringParameter('rl') == "true";
 
-            if (index) {
-                that.assetSequenceIndex = parseInt(index);
-            } else {
-                var hash = utils.Utils.getHashValues('/', parent.document);
-                that.assetSequenceIndex = hash[0] || 0;
+            if (isHomeDomain && !isReload){
+                that.assetSequenceIndex = parseInt(utils.Utils.getHashParameter('asi', parent.document));
+            } 
+
+            if (!that.assetSequenceIndex){
+                that.assetSequenceIndex = parseInt(utils.Utils.getQuerystringParameter('asi')) || 0;
             }
 
             if (!that.pkg.assetSequences[that.assetSequenceIndex].$ref) {

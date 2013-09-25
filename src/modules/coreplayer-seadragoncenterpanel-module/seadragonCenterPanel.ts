@@ -2,6 +2,7 @@
 /// <reference path="../../js/extensions.d.ts" />
 
 import baseApp = require("../coreplayer-shared-module/baseApp");
+import baseProvider = require("../coreplayer-shared-module/baseProvider");
 import app = require("../../extensions/coreplayer-seadragon-extension/app");
 import baseCenter = require("../coreplayer-shared-module/centerPanel");
 import utils = require("../../utils");
@@ -73,11 +74,13 @@ export class SeadragonCenterPanel extends baseCenter.CenterPanel {
             this.$nextButton.prop('title', this.content.next);
             this.viewer.addControl(this.$nextButton[0], {anchor: OpenSeadragon.ControlAnchor.TOP_RIGHT});
 
+            var that = this;
+
             this.$prevButton.click((e) => {
                 e.preventDefault();
                 OpenSeadragon.cancelEvent(e);
 
-                if (!this.prevButtonEnabled) return;
+                if (!that.prevButtonEnabled) return;
 
                 $.publish(SeadragonCenterPanel.PREV);
             });
@@ -86,7 +89,7 @@ export class SeadragonCenterPanel extends baseCenter.CenterPanel {
                 e.preventDefault();
                 OpenSeadragon.cancelEvent(e);
  
-                if (!this.nextButtonEnabled) return;
+                if (!that.nextButtonEnabled) return;
 
                 $.publish(SeadragonCenterPanel.NEXT);
             });
@@ -123,33 +126,8 @@ export class SeadragonCenterPanel extends baseCenter.CenterPanel {
         return this.provider.assetSequence.assets.length > 1;
     }
 
+    // called every time the seadragon viewer opens a new image.
     viewerOpen() {
-
-        var bounds, hash;
-
-        // check for URL zoom params
-        if (this.app.isDeepLinkingEnabled()) {
-            hash = this.app.getHashValues();
-
-            if (hash.length > 2) {
-                // the third param is the zoom bounds.
-                bounds = this.deserialiseBounds(hash[2]);
-                this.fitToBounds(bounds);
-                return;
-            }
-        }
-
-        if (this.currentBounds) {
-            this.fitToBounds(this.currentBounds);
-        } else {
-            // player is embedded, initial zoom params may be on the querystring.
-            bounds = this.provider.initialZoom;
-
-            if (bounds) {
-                bounds = this.deserialiseBounds(bounds);
-                this.fitToBounds(bounds);
-            }
-        }
 
         if (this.isMultiAsset()) {
             
@@ -167,6 +145,43 @@ export class SeadragonCenterPanel extends baseCenter.CenterPanel {
                 this.disableNextButton();
             }
         }
+        
+        // if there are no currentBounds check for initial zoom params.
+        if (!this.currentBounds){
+            var initialBounds = this.app.getParam(baseProvider.params.zoom);
+
+            if (initialBounds){
+                initialBounds = this.deserialiseBounds(initialBounds);
+                this.currentBounds = initialBounds;
+            }   
+        }
+
+        if (this.currentBounds){
+            this.fitToBounds(this.currentBounds);
+        }
+
+        // if (this.app.isDeepLinkingEnabled()) {
+            
+        //     var z = utils.Utils.getHashParameter('z', parent.document);
+
+        //     if (z){
+        //         this.fitToBounds(this.deserialiseBounds(z));
+        //         return;
+        //     }
+        // }
+        
+        // if (this.currentBounds) {
+        //     this.fitToBounds(this.currentBounds);
+        // } else {
+        //     // player is embedded, initial zoom params may be on the querystring.
+        //     var bounds = this.provider.initialZoom;
+
+        //     if (bounds) {
+        //         bounds = this.deserialiseBounds(bounds);
+        //         this.fitToBounds(bounds);
+        //     }
+        // }
+        
     }
 
     disablePrevButton () {
