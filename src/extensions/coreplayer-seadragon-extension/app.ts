@@ -117,8 +117,8 @@ export class App extends baseApp.BaseApp {
         }
 
         //this.centerPanel = new center.SeadragonCenterPanel(shell.Shell.$centerPanel);
-        this.rightPanel = new right.MoreInfoRightPanel(shell.Shell.$rightPanel);
-        this.footerPanel = new footer.ExtendedFooterPanel(shell.Shell.$footerPanel);
+        //this.rightPanel = new right.MoreInfoRightPanel(shell.Shell.$rightPanel);
+        //this.footerPanel = new footer.ExtendedFooterPanel(shell.Shell.$footerPanel);
 
         this.$helpDialogue = utils.Utils.createDiv('overlay help');
         shell.Shell.$overlays.append(this.$helpDialogue);
