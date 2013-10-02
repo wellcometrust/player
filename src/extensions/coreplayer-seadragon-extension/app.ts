@@ -11,6 +11,7 @@ import left = require("../../modules/coreplayer-treeviewleftpanel-module/treeVie
 import thumbsView = require("../../modules/coreplayer-treeviewleftpanel-module/thumbsView");
 import treeView = require("../../modules/coreplayer-treeviewleftpanel-module/treeView");
 import center = require("../../modules/coreplayer-seadragoncenterpanel-module/seadragonCenterPanel");
+//import center = require("../../modules/wellcomeplayer-seadragoncenterpanel-module/seadragonCenterPanel");
 import right = require("../../modules/coreplayer-moreinforightpanel-module/moreInfoRightPanel");
 import footer = require("../../modules/coreplayer-extendedfooterpanel-module/extendedFooterPanel");
 import help = require("../../modules/coreplayer-dialogues-module/helpDialogue");
@@ -116,6 +117,7 @@ export class App extends baseApp.BaseApp {
             this.leftPanel = new left.TreeViewLeftPanel(shell.Shell.$leftPanel);
         }
 
+        this.centerPanel = new center.SeadragonCenterPanel(shell.Shell.$centerPanel);
         //this.centerPanel = new center.SeadragonCenterPanel(shell.Shell.$centerPanel);
         //this.rightPanel = new right.MoreInfoRightPanel(shell.Shell.$rightPanel);
         //this.footerPanel = new footer.ExtendedFooterPanel(shell.Shell.$footerPanel);
