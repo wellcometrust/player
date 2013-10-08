@@ -18,7 +18,9 @@
             {
                 "emptyValue": "please enter a value",
                 "pageNotFound": "page not found",
-                "ok": "OK"
+                "ok": "OK",
+                "sessionExpired": "Your session has expired, please refresh to log in again",
+                "refresh": "Refresh"
             }
         },
         "helpDialogue":
