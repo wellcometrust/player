@@ -45,6 +45,11 @@ export class BaseProvider {
 
         if (this.isHomeDomain && !this.isReload){
             this.assetSequenceIndex = parseInt(utils.Utils.getHashParameter(BaseProvider.paramMap[params.assetSequenceIndex], parent.document));
+
+            // check for legacy format params (wellcome branch only).
+            if (!this.assetSequenceIndex){
+                this.assetSequenceIndex = parseInt(parent.document.location.hash.replace('#', '').split('/')[0]);
+            }
         } 
 
         if (!this.assetSequenceIndex){
