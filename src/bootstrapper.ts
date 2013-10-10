@@ -37,6 +37,11 @@ class BootStrapper{
 
             if (isHomeDomain && !isReload){
                 that.assetSequenceIndex = parseInt(utils.Utils.getHashParameter('asi', parent.document));
+
+                // check for legacy format params (wellcome branch only).
+                if (!that.assetSequenceIndex){
+                    that.assetSequenceIndex = parseInt(parent.document.location.hash.replace('#', '').split('/')[0]);
+                }
             } 
 
             if (!that.assetSequenceIndex){
