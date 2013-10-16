@@ -162,7 +162,7 @@ export class BaseProvider {
     } 
 
     replaceSectionType(sectionType: string): string {
-        if (this.config.options.sectionMappings[sectionType]) {
+        if (this.config.options.sectionMappings && this.config.options.sectionMappings[sectionType]) {
             return this.config.options.sectionMappings[sectionType];
         }
 
