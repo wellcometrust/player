@@ -45,10 +45,10 @@ require([
     'openseadragon',
     'mediaelement',
     'bootstrapper',
-    'extensions/coreplayer-seadragon-extension/app',
-    'extensions/coreplayer-seadragon-extension/provider',
-    'extensions/coreplayer-mediaelement-extension/app',
-    'extensions/coreplayer-mediaelement-extension/provider'
+    'extensions/wellcomeplayer-seadragon-extension/app',
+    'extensions/wellcomeplayer-seadragon-extension/provider',
+    'extensions/wellcomeplayer-mediaelement-extension/app',
+    'extensions/wellcomeplayer-mediaelement-extension/provider'
     ],
     ($, 
     plugins, 
@@ -70,22 +70,22 @@ require([
         extensions['seadragon/dzi'] = {
             type: seadragonExtension.App,
             provider: seadragonProvider.Provider,
-            config: 'extensions/coreplayer-seadragon-extension/config.js',
-            css: 'extensions/coreplayer-seadragon-extension/css/styles.css'
+            config: 'extensions/wellcomeplayer-seadragon-extension/config.js',
+            css: 'extensions/wellcomeplayer-seadragon-extension/css/styles.css'
         };
 
         extensions['video/mp4'] = {
             type: mediaelementExtension.App,
             provider: mediaelementProvider.Provider,
-            config: 'extensions/coreplayer-mediaelement-extension/config.js',
-            css: 'extensions/coreplayer-mediaelement-extension/css/styles.css'
+            config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
+            css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
         };
 
         extensions['audio/mp3'] = {
             type: mediaelementExtension.App,
             provider: mediaelementProvider.Provider,
-            config: 'extensions/coreplayer-mediaelement-extension/config.js',
-            css: 'extensions/coreplayer-mediaelement-extension/css/styles.css'
+            config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
+            css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
         };
 
         new bootstrapper(extensions);
