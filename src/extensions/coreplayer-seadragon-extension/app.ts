@@ -108,6 +108,10 @@ export class App extends baseApp.BaseApp {
             }
         });
 
+        $.subscribe(footer.ExtendedFooterPanel.EMBED, (e) => {
+            $.publish(embed.EmbedDialogue.SHOW_EMBED_DIALOGUE);
+        });
+
         this.createModules();        
 
         this.setParams();
@@ -219,9 +223,5 @@ export class App extends baseApp.BaseApp {
         if (bounds) return this.centerPanel.serialiseBounds(bounds);
 
         return "";
-    }
-
-    getCurrentAsset(): any {
-        return this.provider.assetSequence.assets[this.currentAssetIndex];
     }
 }
