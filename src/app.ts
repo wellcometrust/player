@@ -45,9 +45,9 @@ require([
     'openseadragon',
     'mediaelement',
     'bootstrapper',
-    'extensions/wellcomeplayer-seadragon-extension/app',
+    'extensions/wellcomeplayer-seadragon-extension/extension',
     'extensions/wellcomeplayer-seadragon-extension/provider',
-    'extensions/wellcomeplayer-mediaelement-extension/app',
+    'extensions/wellcomeplayer-mediaelement-extension/extension',
     'extensions/wellcomeplayer-mediaelement-extension/provider'
     ],
     ($, 
@@ -68,21 +68,21 @@ require([
         var extensions = {};
 
         extensions['seadragon/dzi'] = {
-            type: seadragonExtension.App,
+            type: seadragonExtension.Extension,
             provider: seadragonProvider.Provider,
             config: 'extensions/wellcomeplayer-seadragon-extension/config.js',
             css: 'extensions/wellcomeplayer-seadragon-extension/css/styles.css'
         };
 
         extensions['video/mp4'] = {
-            type: mediaelementExtension.App,
+            type: mediaelementExtension.Extension,
             provider: mediaelementProvider.Provider,
             config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
             css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
         };
 
         extensions['audio/mp3'] = {
-            type: mediaelementExtension.App,
+            type: mediaelementExtension.Extension,
             provider: mediaelementProvider.Provider,
             config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
             css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'

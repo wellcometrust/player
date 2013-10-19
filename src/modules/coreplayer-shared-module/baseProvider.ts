@@ -1,6 +1,7 @@
 /// <reference path="../../js/jquery.d.ts" />
 /// <reference path="../../js/extensions.d.ts" />
 import utils = require("../../utils");
+import IProvider = require("./iProvider");
 
 export enum params {
     assetSequenceIndex,
@@ -8,7 +9,7 @@ export enum params {
     zoom
 }
 
-export class BaseProvider {
+export class BaseProvider implements IProvider{
     
     config: any;
     pkg: any;
@@ -113,9 +114,9 @@ export class BaseProvider {
     // a collection of sections it belongs to.
     // it also builds a path string property for each section.
     // this can then be used when a section is clicked in the tree view
-    // where getSectionIndex in BaseApp loops though all assets and their
+    // where getSectionIndex in baseExtension loops though all assets and their
     // associated sections until it finds one with a matching path.
-    parseSections(section, assets, path): void {
+    parseSections(section: any, assets: any[], path: string): void {
 
         section.path = path;
 
@@ -139,7 +140,7 @@ export class BaseProvider {
         }
     }
 
-    parseStructures(structure, assetSequences, path): void {
+    parseStructures(structure: any, assetSequences: any[], path: string): void {
 
         structure.path = path;
 
