@@ -9,6 +9,10 @@ export enum params {
     zoom
 }
 
+// providers contain methods that could be implemented differently according
+// to factors like varying back end data provision systems.
+// they provide a consistent interface and set of data structures 
+// for extensions to operate against.
 export class BaseProvider implements IProvider{
     
     config: any;

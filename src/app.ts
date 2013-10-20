@@ -37,7 +37,6 @@ require.config({
 require([
     'jquery',
     'plugins',
-    'console',
     'pubsub',
     'jsviews',
     'yepnope',
@@ -52,7 +51,6 @@ require([
     ],
     ($, 
     plugins, 
-    console, 
     pubsub, 
     jsviews,
     yepnope,
