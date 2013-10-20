@@ -20,7 +20,9 @@
                 "pageNotFound": "page not found",
                 "ok": "OK",
                 "sessionExpired": "Your session has expired, please refresh to log in again",
-                "refresh": "Refresh"
+                "refresh": "Refresh",
+                "invalidNumber": "Please enter a valid number",
+                "pageNotFound": "This item does not contain a page with the number you entered. Try switching the numbering mode to 'image'"
             }
         },
         "helpDialogue":
