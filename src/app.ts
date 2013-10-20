@@ -4,7 +4,6 @@ require.config({
     paths: {
         'jquery': 'js/jquery-1.10.2.min',
         'plugins': 'js/jquery.plugins',
-        'console': 'js/console',
         'pubsub': 'js/pubsub',
         'jsviews': 'js/jsviews.min',
         'yepnope': 'js/yepnope.1.5.4-min',
