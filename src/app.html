@@ -17,8 +17,8 @@
     <script type="text/javascript">
 
         // Google Analytics
-        function trackEvent(category, action, label) {
-            _gaq.push(['_trackEvent', category, action, label]);
+        function trackEvent(category, action, label, value) {
+            _gaq.push(['_trackEvent', category, action, label, value]);
         }
 
         function trackVariable(slot, name, value, scope) {
