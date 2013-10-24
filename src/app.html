@@ -18,10 +18,12 @@
 
         // Google Analytics
         function trackEvent(category, action, label, value) {
+            //console.log('event: ', category, action, label, value);
             _gaq.push(['_trackEvent', category, action, label, value]);
         }
 
         function trackVariable(slot, name, value, scope) {
+            //console.log('variable: ', slot, name, value, scope);
             _gaq.push(['_setCustomVar', slot, name, value, scope]);
         }
 
