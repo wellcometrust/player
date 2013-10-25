@@ -97,8 +97,22 @@ class BootStrapper{
         // create provider.
         var provider = new extension.provider(config, this.pkg);
 
-        // create extension.
-        new extension.type(provider);
+        var that = this;
+
+        // preload more info data? (wellcome branch only)
+        if (config.options && config.options.preloadMoreInfo === true){
+            var uri = provider.getMoreInfoUri();
+
+            $.getJSON(uri, function (data) {
+                provider.moreInfo = data;
+
+                // create extension.
+                new extension.type(provider);
+            });
+        } else {
+            // create extension.
+            new extension.type(provider);
+        }
     }
 }
 
