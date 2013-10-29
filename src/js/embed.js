@@ -137,7 +137,7 @@
                 window.scrollTo(0, 0);
 
                 $appFrame.css({
-                    'position': 'fixed',
+                    'position': 'absolute',
                     'z-index': 9999,
                     'height': $(window).height(),
                     'width': $(window).width(),
