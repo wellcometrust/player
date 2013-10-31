@@ -10,7 +10,7 @@ import header = require("../../modules/coreplayer-pagingheaderpanel-module/pagin
 import left = require("../../modules/coreplayer-treeviewleftpanel-module/treeViewLeftPanel");
 import thumbsView = require("../../modules/coreplayer-treeviewleftpanel-module/thumbsView");
 import treeView = require("../../modules/coreplayer-treeviewleftpanel-module/treeView");
-import center = require("../../modules/coreplayer-seadragoncenterpanel-module/seadragonCenterPanel");
+import center = require("../../modules/example-filelinkcenterpanel-module/fileLinkCenterPanel");
 import right = require("../../modules/coreplayer-moreinforightpanel-module/moreInfoRightPanel");
 import footer = require("../../modules/coreplayer-shared-module/footerPanel");
 import help = require("../../modules/coreplayer-dialogues-module/helpDialogue");
@@ -21,7 +21,7 @@ export class Extension extends baseExtension.BaseExtension {
 
     headerPanel: header.PagingHeaderPanel;
     leftPanel: left.TreeViewLeftPanel;
-    centerPanel: center.SeadragonCenterPanel;
+    centerPanel: center.FileLinkCenterPanel;
     rightPanel: right.MoreInfoRightPanel;
     footerPanel: footer.FooterPanel;
     $helpDialogue: JQuery;
@@ -93,22 +93,6 @@ export class Extension extends baseExtension.BaseExtension {
             this.viewPage(index);
         });
 
-        $.subscribe(center.SeadragonCenterPanel.SEADRAGON_ANIMATION_FINISH, (e, viewer) => {
-            this.setParam(baseProvider.params.zoom, this.centerPanel.serialiseBounds(this.centerPanel.currentBounds));
-        });
-
-        $.subscribe(center.SeadragonCenterPanel.PREV, (e) => {
-            if (this.currentAssetIndex != 0) {
-                this.viewPage(Number(this.currentAssetIndex) - 1);
-            }
-        });
-        
-        $.subscribe(center.SeadragonCenterPanel.NEXT, (e) => {
-            if (this.currentAssetIndex != this.provider.assetSequence.assets.length - 1) {
-                this.viewPage(Number(this.currentAssetIndex) + 1);
-            }
-        });
-
         $.subscribe(footer.FooterPanel.EMBED, (e) => {
             $.publish(embed.EmbedDialogue.SHOW_EMBED_DIALOGUE);
         });
@@ -136,7 +120,7 @@ export class Extension extends baseExtension.BaseExtension {
             this.leftPanel = new left.TreeViewLeftPanel(shell.Shell.$leftPanel);
         }
 
-        this.centerPanel = new center.SeadragonCenterPanel(shell.Shell.$centerPanel);
+        this.centerPanel = new center.FileLinkCenterPanel(shell.Shell.$centerPanel);
         this.rightPanel = new right.MoreInfoRightPanel(shell.Shell.$rightPanel);
         this.footerPanel = new footer.FooterPanel(shell.Shell.$footerPanel);
 
@@ -215,16 +199,5 @@ export class Extension extends baseExtension.BaseExtension {
             default:
                 return Extension.IMAGE_MODE;
         }
-    }
-
-    getViewerBounds(): string{
-        
-        if (!this.centerPanel) return;
-
-        var bounds = this.centerPanel.getBounds();
-
-        if (bounds) return this.centerPanel.serialiseBounds(bounds);
-
-        return "";
     }
 }

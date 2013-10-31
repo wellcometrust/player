@@ -30,7 +30,7 @@ export class EmbedDialogue extends embed.EmbedDialogue {
     formatCode(): void {
 
         var assetSequenceIndex = this.extension.currentAssetIndex;
-        var zoom = (<extension.Extension>this.extension).getViewerBounds();
+        var zoom = '';
 
         this.code = (<ISeadragonProvider>this.provider).getEmbedScript(
             this.extension.currentAssetIndex,
