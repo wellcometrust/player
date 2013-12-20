@@ -78,6 +78,13 @@ require([
             css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
         };
 
+        extensions['video/multiple-sources'] = {
+            type: mediaelementExtension.Extension,
+            provider: mediaelementProvider.Provider,
+            config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
+            css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
+        };
+
         extensions['audio/mp3'] = {
             type: mediaelementExtension.Extension,
             provider: mediaelementProvider.Provider,
