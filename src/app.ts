@@ -46,10 +46,9 @@ require([
 	'extensions/wellcomeplayer-seadragon-extension/extension',
     'extensions/wellcomeplayer-seadragon-extension/provider',
     'extensions/wellcomeplayer-mediaelement-extension/extension',
-    'extensions/wellcomeplayer-mediaelement-extension/provider'
+    'extensions/wellcomeplayer-mediaelement-extension/provider',
 	'extensions/coreplayer-pdf-extension/extension',
-    'extensions/coreplayer-pdf-extension/provider'
-    ],
+    'extensions/coreplayer-pdf-extension/provider'],
     ($,
     plugins,
     pubsub,
