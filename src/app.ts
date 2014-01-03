@@ -43,10 +43,12 @@ require([
     'openseadragon',
     'mediaelement',
     'bootstrapper',
-    'extensions/wellcomeplayer-seadragon-extension/extension',
+	'extensions/wellcomeplayer-seadragon-extension/extension',
     'extensions/wellcomeplayer-seadragon-extension/provider',
     'extensions/wellcomeplayer-mediaelement-extension/extension',
     'extensions/wellcomeplayer-mediaelement-extension/provider'
+	'extensions/coreplayer-pdf-extension/extension',
+    'extensions/coreplayer-pdf-extension/provider'
     ],
     ($,
     plugins,
@@ -60,7 +62,9 @@ require([
     seadragonExtension,
     seadragonProvider,
     mediaelementExtension,
-    mediaelementProvider) => {
+    mediaelementProvider,
+    pdfExtension,
+    pdfProvider) => {
 
         var extensions = {};
 
@@ -90,6 +94,13 @@ require([
             provider: mediaelementProvider.Provider,
             config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
             css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
+        };
+
+        extensions['application/pdf'] = {
+            type: pdfExtension.Extension,
+            provider: pdfProvider.Provider,
+            config: 'extensions/coreplayer-pdf-extension/config.js',
+            css: 'extensions/coreplayer-pdf-extension/css/styles.css'
         };
 
         new bootstrapper(extensions);
