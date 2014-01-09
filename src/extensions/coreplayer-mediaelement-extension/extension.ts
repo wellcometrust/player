@@ -28,9 +28,6 @@ export class Extension extends baseExtension.BaseExtension{
     $embedDialogue: JQuery;
     embedDialogue: embed.EmbedDialogue;
 
-    // events
-    static OPEN_MEDIA: string = 'onOpenMedia';
-
     constructor(provider: IProvider) {
         super(provider);
     }
