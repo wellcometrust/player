@@ -55,6 +55,12 @@ node_modules
 !src/examples/*.js
 
 #################
+## Css
+#################
+
+src/extensions/*/css/*.css
+
+#################
 ## Eclipse
 #################
 
