@@ -55,21 +55,6 @@ node_modules
 !src/examples/*.js
 
 #################
-## Css
-#################
-
-src/extensions/*/css/*.css
-
-#################
-## Extensions/Modules
-#################
-
-src/extensions/*
-!src/extensions/core*
-src/modules/*
-!src/modules/core*
-
-#################
 ## Eclipse
 #################
 

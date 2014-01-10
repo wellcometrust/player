@@ -1,0 +1,24 @@
+[submodule "src/extensions/wellcomeplayer-mediaelement-extension"]
+	path = src/extensions/wellcomeplayer-mediaelement-extension
+	url = https://github.com/wellcomelibrary/wellcomeplayer-mediaelement-extension.git
+[submodule "src/extensions/wellcomeplayer-seadragon-extension"]
+	path = src/extensions/wellcomeplayer-seadragon-extension
+	url = https://github.com/wellcomelibrary/wellcomeplayer-seadragon-extension.git
+[submodule "src/modules/wellcomeplayer-dialogues-module"]
+	path = src/modules/wellcomeplayer-dialogues-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-dialogues-module.git
+[submodule "src/modules/wellcomeplayer-extendedfooterpanel-module"]
+	path = src/modules/wellcomeplayer-extendedfooterpanel-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-extendedfooterpanel-module.git
+[submodule "src/modules/wellcomeplayer-moreinforightpanel-module"]
+	path = src/modules/wellcomeplayer-moreinforightpanel-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-moreinforightpanel-module.git
+[submodule "src/modules/wellcomeplayer-seadragoncenterpanel-module"]
+	path = src/modules/wellcomeplayer-seadragoncenterpanel-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-seadragoncenterpanel-module.git
+[submodule "src/modules/wellcomeplayer-searchfooterpanel-module"]
+	path = src/modules/wellcomeplayer-searchfooterpanel-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-searchfooterpanel-module.git
+[submodule "src/modules/wellcomeplayer-shared-module"]
+	path = src/modules/wellcomeplayer-shared-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-shared-module.git
