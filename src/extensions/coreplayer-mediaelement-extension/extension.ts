@@ -29,7 +29,10 @@ export class Extension extends baseExtension.BaseExtension{
     embedDialogue: embed.EmbedDialogue;
 
     // events
-    static OPEN_MEDIA: string = 'onOpenMedia';
+    static OPEN_MEDIA: string = 'onMediaOpened';
+    static MEDIA_PLAYED: string = 'onMediaPlayed';
+    static MEDIA_PAUSED: string = 'onMediaPaused';
+    static MEDIA_ENDED: string = 'onMediaEnded';
 
     constructor(provider: IProvider) {
         super(provider);
@@ -48,7 +51,8 @@ export class Extension extends baseExtension.BaseExtension{
         });
 
         $.subscribe(treeView.TreeView.VIEW_STRUCTURE, (e, structure: any) => {
-            this.viewAssetSequence(structure.assetSequence.index);
+
+            this.viewStructure(structure);
         });
 
         $.subscribe(footer.FooterPanel.EMBED, (e) => {
@@ -106,7 +110,8 @@ export class Extension extends baseExtension.BaseExtension{
 
         this.viewAsset(0, () => {
 
-            asset.fileUri = (<provider.Provider>this.provider).getMediaUri(asset);
+
+            asset.fileUri = (<provider.Provider>this.provider).getMediaUri(asset.fileUri);
 
             $.publish(Extension.OPEN_MEDIA, [asset]);
 

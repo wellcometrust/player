@@ -54,8 +54,8 @@ export class BaseProvider implements IProvider{
         if (this.isHomeDomain && !this.isReload){
             this.assetSequenceIndex = parseInt(utils.Utils.getHashParameter(BaseProvider.paramMap[params.assetSequenceIndex], parent.document));
 
-            // check for legacy format params (wellcome branch only).
-            if (!this.assetSequenceIndex){
+        // check for legacy format params (wellcome branch only).
+        if (!this.assetSequenceIndex){
                 this.assetSequenceIndex = parseInt(parent.document.location.hash.replace('#', '').split('/')[0]);
             }
         } 
@@ -167,7 +167,7 @@ export class BaseProvider implements IProvider{
                 this.parseStructures(structure.structures[j], assetSequences, path + '/' + j);
             }
         }
-    } 
+    }
 
     replaceSectionType(sectionType: string): string {
         if (this.config.options.sectionMappings && this.config.options.sectionMappings[sectionType]) {
@@ -187,5 +187,13 @@ export class BaseProvider implements IProvider{
 
     getSeeAlso(): any {
         return this.assetSequence.seeAlso;
+    }
+
+    getMediaUri(fileUri: string): string{
+        var baseUri = this.options.mediaBaseUri || "";
+        var template = this.options.mediaUriTemplate;
+        var uri = String.prototype.format(template, baseUri, fileUri);
+
+        return uri;
     }
 }
