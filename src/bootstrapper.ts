@@ -2,7 +2,7 @@
 import utils = require("utils");
 
 class BootStrapper{
-    
+
     pkg: any;
     extensions: any;
     dataBaseUri: string;
@@ -48,6 +48,13 @@ class BootStrapper{
                 that.assetSequenceIndex = parseInt(utils.Utils.getQuerystringParameter('asi')) || 0;
             }
 
+            if (!that.pkg.assetSequences){
+                try{
+                    parent.$(parent.document).trigger("onNotFound");
+                    return;
+                } catch (e) {}
+            }
+
             if (!that.pkg.assetSequences[that.assetSequenceIndex].$ref) {
                 that.assetSequence = that.pkg.assetSequences[that.assetSequenceIndex];
                 that.loadDependencies();
@@ -71,9 +78,9 @@ class BootStrapper{
         var extension = that.extensions[that.assetSequence.assetType];
 
         yepnope.injectCss(extension.css, function () {
-            
+
             $.getJSON(extension.config, (config) => {
-                
+
                 var configExtension = utils.Utils.getQuerystringParameter('c');
 
                 // if data-config has been set on embedding div, load the js
