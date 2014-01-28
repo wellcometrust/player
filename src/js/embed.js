@@ -96,6 +96,7 @@
         if (!dataUri) dataUri = 'http://wellcomelibrary.org/package/' + $app.attr('data-id');
         if (!assetSequenceIndex) assetSequenceIndex = $app.attr('data-manifestation');
         if (!assetIndex) assetIndex = $app.attr('data-index');
+        if (!config) config = '/service/playerconfig';
 
         dataUri = encodeURIComponent(dataUri);
 
