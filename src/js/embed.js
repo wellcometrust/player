@@ -47,13 +47,12 @@
         document.cookie = name + "=" + value + expires + "; path=/";
     }
 
-    // get the part preceding 'js/embed.js'
-
     // replace legacy url (wellcome branch only)
     if (scriptUri.indexOf('/plugins/wellcome/embed.js') !== -1){
-        scriptUri = scriptUri.replace('/plugins/wellcome/embed.js', '/spas/player/build/wellcomeplayer/js/embed.js');
+        absScriptUri = scriptUri = 'http://wellcomelibrary.org/spas/player/build/wellcomeplayer/js/embed.js';
     }
 
+    // get the part preceding 'js/embed.js'
     var baseUri = (/(.*)js\/embed.js/).exec(scriptUri)[1];
     appUri = baseUri + 'app.html';
     easyXDMUri = baseUri + 'js/easyXDM.min.js';
