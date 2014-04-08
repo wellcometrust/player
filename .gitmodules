@@ -22,3 +22,6 @@
 [submodule "src/modules/wellcomeplayer-shared-module"]
 	path = src/modules/wellcomeplayer-shared-module
 	url = https://github.com/wellcomelibrary/wellcomeplayer-shared-module.git
+[submodule "src/extensions/wellcomeplayer-pdf-extension"]
+	path = src/extensions/wellcomeplayer-pdf-extension
+	url = https://github.com/wellcomelibrary/wellcomeplayer-pdf-extension.git
