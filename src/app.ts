@@ -45,8 +45,8 @@ require([
     'extensions/wellcomeplayer-seadragon-extension/provider',
     'extensions/wellcomeplayer-mediaelement-extension/extension',
     'extensions/wellcomeplayer-mediaelement-extension/provider',
-	'extensions/coreplayer-pdf-extension/extension',
-    'extensions/coreplayer-pdf-extension/provider'],
+	'extensions/wellcomeplayer-pdf-extension/extension',
+    'extensions/wellcomeplayer-pdf-extension/provider'],
     ($,
     plugins,
     _,
@@ -97,8 +97,8 @@ require([
         extensions['application/pdf'] = {
             type: pdfExtension.Extension,
             provider: pdfProvider.Provider,
-            config: 'extensions/coreplayer-pdf-extension/config.js',
-            css: 'extensions/coreplayer-pdf-extension/css/styles.css'
+            config: 'extensions/wellcomeplayer-pdf-extension/config.js',
+            css: 'extensions/wellcomeplayer-pdf-extension/css/styles.css'
         };
 
         new bootstrapper(extensions);
