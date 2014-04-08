@@ -74,6 +74,9 @@ export class Extension extends baseExtension.BaseExtension{
             $.publish(baseExtension.BaseExtension.RESIZE);
 
             that.viewMedia();
+
+            // publish created event
+            $.publish(Extension.CREATED);
         });
     }
 
