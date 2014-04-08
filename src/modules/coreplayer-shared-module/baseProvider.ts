@@ -11,10 +11,10 @@ export enum params {
 
 // providers contain methods that could be implemented differently according
 // to factors like varying back end data provision systems.
-// they provide a consistent interface and set of data structures 
+// they provide a consistent interface and set of data structures
 // for extensions to operate against.
 export class BaseProvider implements IProvider{
-    
+
     config: any;
     pkg: any;
     assetSequenceIndex: number;
@@ -33,7 +33,10 @@ export class BaseProvider implements IProvider{
     static paramMap: string[] = ['asi', 'ai', 'z'];
 
     options: any = {
-        
+        thumbsUriTemplate: "{0}{1}",
+        timestampUris: false,
+        mediaBaseUri: "http://wellcomelibrary.org",
+        mediaUriTemplate: "{0}{1}"
     };
 
     constructor(config: any, pkg: any) {
@@ -60,7 +63,7 @@ export class BaseProvider implements IProvider{
         if (!this.assetSequenceIndex){
                 this.assetSequenceIndex = parseInt(parent.document.location.hash.replace('#', '').split('/')[0]);
             }
-        } 
+        }
 
         if (!this.assetSequenceIndex){
             this.assetSequenceIndex = parseInt(utils.Utils.getQuerystringParameter(BaseProvider.paramMap[params.assetSequenceIndex])) || 0;
@@ -197,5 +200,19 @@ export class BaseProvider implements IProvider{
         var uri = String.prototype.format(template, baseUri, fileUri);
 
         return uri;
+    }
+
+    getThumbUri(asset: any, thumbsBaseUri?: string, thumbsUriTemplate?: string): string {
+        var baseUri = thumbsBaseUri ? thumbsBaseUri : this.options.thumbsBaseUri || this.options.dataBaseUri || "";
+        var template = thumbsUriTemplate? thumbsUriTemplate : this.options.thumbsUriTemplate;
+        var uri = String.prototype.format(template, baseUri, asset.thumbnailPath);
+
+        if (this.options.timestampUris) uri = this.addTimestamp(uri);
+
+        return uri;
+    }
+
+    addTimestamp(uri: string): string{
+        return uri + "?t=" + utils.Utils.getTimeStamp();
     }
 }
