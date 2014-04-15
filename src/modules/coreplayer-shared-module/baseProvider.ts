@@ -61,7 +61,9 @@ export class BaseProvider implements IProvider{
 
         // check for legacy format params (wellcome branch only).
         if (!this.assetSequenceIndex){
-                this.assetSequenceIndex = parseInt(parent.document.location.hash.replace('#', '').split('/')[0]);
+                var hash = parent.document.location.hash;
+                if (hash.startsWith('#/')) hash = hash.replace('#/', '#');
+                this.assetSequenceIndex = parseInt(hash.replace('#', '').split('/')[0]);
             }
         }
 
