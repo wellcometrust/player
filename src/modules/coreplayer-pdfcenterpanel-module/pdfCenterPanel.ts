@@ -10,12 +10,6 @@ import utils = require("../../utils");
 
 export class PDFCenterPanel extends baseCenter.CenterPanel {
 
-    $container: JQuery;
-    $media: JQuery;
-    mediaHeight: number;
-    mediaWidth: number;
-    $canvas: JQuery;
-
     constructor($element: JQuery) {
         super($element);
     }
@@ -26,67 +20,47 @@ export class PDFCenterPanel extends baseCenter.CenterPanel {
 
         super.create();
 
-        var that = this;
-
         // events.
         $.subscribe(extension.Extension.OPEN_MEDIA, (e, asset) => {
-            that.viewMedia(asset);
+            this.viewMedia(asset);
         });
-
-        this.$canvas = $('<canvas id="pdf-canvas" style="border:1px solid black;"/>');
-        this.$content.append(this.$canvas);
     }
 
     viewMedia(asset) {
 
-        /*
-        // create pdf object
-        var myPDF = new PDFObject({
-            url: asset.fileUri,
-            id: "PDF",
-        }).embed('content');
-        */
+        var browser = window.BrowserDetect.browser;
+        var version = window.BrowserDetect.version;
 
-        if (window.DEBUG){
-            PDFJS.workerSrc = 'extensions/coreplayer-pdf-extension/js/pdfworker.min.js';
-        } else {
-            PDFJS.workerSrc = 'js/pdfworker.min.js';
-        }
+        if (browser == 'Chrome' ||
+            browser == 'Firefox' ||
+            browser == 'Opera' ||
+            browser == 'Explorer' && version >= 10) {
 
+            // load viewer.html
+            this.$content.load('modules/coreplayer-pdfcenterpanel-module/viewer.html', () => {
+                if (window.DEBUG){
+                    PDFJS.workerSrc = 'extensions/coreplayer-pdf-extension/js/pdf.worker.min.js';
+                } else {
+                    PDFJS.workerSrc = 'js/pdf.worker.min.js';
+                }
 
-        PDFJS.getDocument(asset.fileUri).then(function(pdf) {
-            // Using promise to fetch the page
-            pdf.getPage(1).then(function(page) {
-                var scale = 1.5;
-                var viewport = page.getViewport(scale);
+                PDFJS.DEFAULT_URL = asset.fileUri;
 
-                // Prepare canvas using PDF page dimensions
-                var canvas: HTMLCanvasElement = <HTMLCanvasElement>document.getElementById('pdf-canvas');
-                var context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                window.webViewerLoad();
 
-                // Render PDF page into canvas context
-                var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-
-                page.render(renderContext);
+                this.resize();
             });
-        });
 
-        this.resize();
+        } else {
+            // create pdf object
+            var myPDF = new PDFObject({
+                url: asset.fileUri,
+                id: "PDF",
+            }).embed('content');
+        }
     }
 
     resize() {
-
         super.resize();
-
-
-        // if (this.$media){
-        //     this.$media.width(this.$content.width());
-        //     this.$media.height(this.$content.height());
-        // }
     }
 }

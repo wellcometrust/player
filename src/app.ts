@@ -1,5 +1,7 @@
 /// <reference path="js/require.d.ts" />
 
+
+
 require.config({
     paths: {
         'jquery': 'js/jquery-1.10.2.min',
@@ -8,7 +10,8 @@ require.config({
         'pubsub': 'js/pubsub',
         'jsviews': 'js/jsviews.min',
         'yepnope': 'js/yepnope.1.5.4-min',
-        'yepnopecss': 'js/yepnope.css'
+        'yepnopecss': 'js/yepnope.css',
+        'l10n': 'js/l10n'
     },
     shim: {
         jquery: {
@@ -41,6 +44,7 @@ require([
     'yepnope',
     'yepnopecss',
     'bootstrapper',
+	'l10n',
 	'extensions/wellcomeplayer-seadragon-extension/extension',
     'extensions/wellcomeplayer-seadragon-extension/provider',
     'extensions/wellcomeplayer-mediaelement-extension/extension',
