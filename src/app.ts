@@ -59,6 +59,7 @@ require([
     yepnope,
     yepnopecss,
     bootstrapper,
+    l10n,
     seadragonExtension,
     seadragonProvider,
     mediaelementExtension,
