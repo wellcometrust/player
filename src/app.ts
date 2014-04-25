@@ -44,13 +44,14 @@ require([
     'yepnope',
     'yepnopecss',
     'bootstrapper',
+
 	'l10n',
 	'extensions/wellcomeplayer-seadragon-extension/extension',
     'extensions/wellcomeplayer-seadragon-extension/provider',
     'extensions/wellcomeplayer-mediaelement-extension/extension',
     'extensions/wellcomeplayer-mediaelement-extension/provider',
 	'extensions/wellcomeplayer-pdf-extension/extension',
-    'extensions/wellcomeplayer-pdf-extension/provider'],
+    'extensions/wellcomeplayer-pdf-extension/provider']
     ($,
     plugins,
     _,
