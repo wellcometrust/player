@@ -11,7 +11,7 @@ export class BaseExtension implements IExtension {
 
     shell: shell.Shell;
     isFullScreen: boolean = false;
-    currentAssetIndex: number;
+    canvasIndex: number;
     mouseX: number;
     mouseY: number;
     $element: JQuery;
@@ -22,9 +22,9 @@ export class BaseExtension implements IExtension {
     // events
     static RESIZE: string = 'onResize';
     static TOGGLE_FULLSCREEN: string = 'onToggleFullScreen';
-    static ASSET_INDEX_CHANGED: string = 'onAssetIndexChanged';
+    static CANVAS_INDEX_CHANGED: string = 'onCanvasIndexChanged';
     static CLOSE_ACTIVE_DIALOGUE: string = 'onCloseActiveDialogue';
-    static ASSETSEQUENCE_INDEX_CHANGED: string = 'onAssetSequenceIndexChanged';
+    static SEQUENCE_INDEX_CHANGED: string = 'onSequenceIndexChanged';
     static REDIRECT: string = 'onRedirect';
     static REFRESH: string = 'onRefresh';
     static RELOAD: string = 'onReload';
@@ -66,7 +66,7 @@ export class BaseExtension implements IExtension {
         this.$element.removeClass();
         if (!this.provider.isHomeDomain) this.$element.addClass('embedded');
         if (this.provider.isLightbox) this.$element.addClass('lightbox');
-        this.$element.addClass(this.provider.assetSequence.assetType.replace('/', '-'));
+        this.$element.addClass(this.provider.getSequenceType());
 
         // events.
         window.onresize = () => {
@@ -107,8 +107,8 @@ export class BaseExtension implements IExtension {
         // create shell and shared views.
         this.shell = new shell.Shell(this.$element);
 
-        // set currentAssetIndex to -1 (nothing selected yet).
-        this.currentAssetIndex = -1;
+        // set canvasIndex to -1 (nothing selected yet).
+        this.canvasIndex = -1;
     }
 
     width(): number {
@@ -146,12 +146,12 @@ export class BaseExtension implements IExtension {
         var value;
 
         // deep linking is only allowed when hosted on home domain.
-        if (this.isDeepLinkingEnabled()){
-            value = utils.Utils.getHashParameter(baseProvider.BaseProvider.paramMap[key], parent.document);
+        if (this.provider.isDeepLinkingEnabled()){
+            value = utils.Utils.getHashParameter(this.provider.paramMap[key], parent.document);
         }
 
         if (!value){
-            value = utils.Utils.getQuerystringParameter(baseProvider.BaseProvider.paramMap[key]);
+            value = utils.Utils.getQuerystringParameter(this.provider.paramMap[key]);
         }
 
         return value;
@@ -160,130 +160,18 @@ export class BaseExtension implements IExtension {
     // set hash params depending on whether the player is embedded.
     setParam(key: baseProvider.params, value: any): void{
 
-        if (this.isDeepLinkingEnabled()){
-            utils.Utils.setHashParameter(baseProvider.BaseProvider.paramMap[key], value, parent.document);
+        if (this.provider.isDeepLinkingEnabled()){
+            utils.Utils.setHashParameter(this.provider.paramMap[key], value, parent.document);
         }
     }
 
-    viewAsset(assetIndex: number, callback?: (i: number) => any): void {
+    viewCanvas(canvasIndex: number, callback?: (i: number) => any): void {
 
-        this.currentAssetIndex = assetIndex;
+        this.provider.canvasIndex = canvasIndex;
 
-        $.publish(BaseExtension.ASSET_INDEX_CHANGED, [assetIndex]);
+        $.publish(BaseExtension.CANVAS_INDEX_CHANGED, [canvasIndex]);
 
-        if (callback) callback(assetIndex);
-    }
-
-    viewAssetSequence(index: number): void {
-
-        if (this.isFullScreen) {
-            $.publish(BaseExtension.TOGGLE_FULLSCREEN);
-        }
-
-        this.triggerSocket(BaseExtension.ASSETSEQUENCE_INDEX_CHANGED, index);
-    }
-
-    viewStructure(structure: any): void{
-        if (structure.seeAlso && structure.seeAlso.tag && structure.seeAlso.data){
-            if (structure.seeAlso.tag === 'OpenExternal'){
-                var uri = this.provider.getMediaUri(structure.seeAlso.data);
-                window.open(uri, '_blank');
-            }
-        } else {
-            this.viewAssetSequence(structure.assetSequence.index);
-        }
-    }
-
-    isDeepLinkingEnabled(): boolean {
-
-        return (this.provider.isHomeDomain && this.provider.isOnlyInstance);
-    }
-
-    getSectionByAssetIndex(index: number): any {
-
-        var asset = this.getAssetByIndex(index);
-
-        return this.getAssetSection(asset);
-    }
-
-    getSectionIndex(path: string): number {
-
-        for (var i = 0; i < this.provider.assetSequence.assets.length; i++) {
-            var asset = this.provider.assetSequence.assets[i];
-            for (var j = 0; j < asset.sections.length; j++) {
-                var section = asset.sections[j];
-
-                if (section.path == path) {
-                    return i;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    getAssetSection(asset: any): any {
-        // get the deepest section that this file belongs to.
-        return asset.sections.last();
-    }
-
-    getAssetByIndex(index: number): any {
-
-        return this.provider.assetSequence.assets[index];
-    }
-
-    getLastAssetOrderLabel(): string {
-
-        // get the last orderlabel that isn't empty or '-'.
-        for (var i = this.provider.assetSequence.assets.length - 1; i >= 0; i--) {
-            var asset = this.provider.assetSequence.assets[i];
-
-            var regExp = /\d/;
-
-            if (regExp.test(asset.orderLabel)) {
-                return asset.orderLabel;
-            }
-        }
-
-        // none exists, so return '-'.
-        return '-';
-    }
-
-    getAssetIndexByOrderLabel(label: string): number {
-
-        // label value may be double-page e.g. 100-101 or 100_101 or 100 101 etc
-        var regExp = /(\d*)\D*(\d*)|(\d*)/;
-        var match = regExp.exec(label);
-
-        var labelPart1 = match[1];
-        var labelPart2 = match[2];
-
-        if (!labelPart1) return -1;
-
-        var searchRegExp, regStr;
-
-        if (labelPart2) {
-            regStr = "^" + labelPart1 + "\\D*" + labelPart2 + "$";
-        } else {
-            regStr = "\\D*" + labelPart1 + "\\D*";
-        }
-
-        searchRegExp = new RegExp(regStr);
-
-        // loop through files, return first one with matching orderlabel.
-        for (var i = 0; i < this.provider.assetSequence.assets.length; i++) {
-            var asset = this.provider.assetSequence.assets[i];
-
-            if (searchRegExp.test(asset.orderLabel)) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    getCurrentAsset(): any {
-        return this.provider.assetSequence.assets[this.currentAssetIndex];
+        if (callback) callback(canvasIndex);
     }
 
     showDialogue(message: string, acceptCallback?: any, buttonText?: string, allowClose?: boolean): void {
@@ -301,15 +189,21 @@ export class BaseExtension implements IExtension {
         $.publish(BaseExtension.CLOSE_ACTIVE_DIALOGUE);
     }
 
-    isMultiAsset(): boolean{
-        return this.provider.assetSequence.assets.length > 1;
-    }
-
     isOverlayActive(): boolean{
         return shell.Shell.$overlays.is(':visible');
     }
 
-    isSeeAlsoEnabled(): boolean{
-        return this.provider.config.options.seeAlsoEnabled !== false;
+    viewManifest(manifest: any): void{
+        var seeAlsoUri = this.provider.getManifestSeeAlsoUri(manifest);
+        if (seeAlsoUri){
+            window.open(seeAlsoUri, '_blank');
+        } else {
+            //this.viewSequence(manifest.sequence.index);
+            if (this.isFullScreen) {
+                $.publish(BaseExtension.TOGGLE_FULLSCREEN);
+            }
+
+            this.triggerSocket(BaseExtension.SEQUENCE_INDEX_CHANGED, manifest.assetSequence);
+        }
     }
 }

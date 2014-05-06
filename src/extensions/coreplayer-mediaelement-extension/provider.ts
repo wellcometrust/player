@@ -6,8 +6,8 @@ import IMediaElementProvider = require("./iMediaElementProvider");
 
 export class Provider extends baseProvider.BaseProvider implements IMediaElementProvider{
 
-    constructor(config: any, pkg: any) {
-        super(config, pkg);
+    constructor(config: any, manifest: any) {
+        super(config, manifest);
 
         this.config.options = $.extend(true, this.options, {
             // override or extend BaseProvider options.
@@ -23,7 +23,7 @@ export class Provider extends baseProvider.BaseProvider implements IMediaElement
 
         var configUri = this.config.uri || '';
 
-        var script = String.prototype.format(template, this.dataUri, this.assetSequenceIndex, configUri, width, height, esu);
+        var script = String.prototype.format(template, this.dataUri, this.sequenceIndex, configUri, width, height, esu);
 
         return script;
     }
@@ -31,12 +31,8 @@ export class Provider extends baseProvider.BaseProvider implements IMediaElement
     getPosterImageUri(): string{
         var baseUri = this.options.mediaBaseUri || "";
         var template = this.options.mediaUriTemplate;
-        var uri = String.prototype.format(template, baseUri, this.assetSequence.extensions.posterImage);
+        var uri = String.prototype.format(template, baseUri, this.sequence.extensions.posterImage);
 
         return uri;
-    }
-
-    addTimestamp(uri: string): string{
-        return uri + "?t=" + utils.Utils.getTimeStamp();
     }
 }

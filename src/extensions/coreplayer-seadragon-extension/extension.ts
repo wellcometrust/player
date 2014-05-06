@@ -16,6 +16,7 @@ import footer = require("../../modules/coreplayer-shared-module/footerPanel");
 import help = require("../../modules/coreplayer-dialogues-module/helpDialogue");
 import embed = require("../../extensions/coreplayer-seadragon-extension/embedDialogue");
 import IProvider = require("../../modules/coreplayer-shared-module/iProvider");
+import ISeadragonProvider = require("./iSeadragonProvider");
 import dependencies = require("./dependencies");
 
 export class Extension extends baseExtension.BaseExtension {
@@ -54,18 +55,18 @@ export class Extension extends baseExtension.BaseExtension {
         });
 
         $.subscribe(header.PagingHeaderPanel.LAST, (e) => {
-            this.viewPage(this.provider.assetSequence.assets.length - 1);
+            this.viewPage(this.provider.getTotalCanvases() - 1);
         });
 
         $.subscribe(header.PagingHeaderPanel.PREV, (e) => {
-            if (this.currentAssetIndex != 0) {
-                this.viewPage(Number(this.currentAssetIndex) - 1);
+            if (this.provider.canvasIndex != 0) {
+                this.viewPage(Number(this.provider.canvasIndex) - 1);
             }
         });
 
         $.subscribe(header.PagingHeaderPanel.NEXT, (e) => {
-            if (this.currentAssetIndex != this.provider.assetSequence.assets.length - 1) {
-                this.viewPage(Number(this.currentAssetIndex) + 1);
+            if (this.provider.canvasIndex != this.provider.getTotalCanvases() - 1) {
+                this.viewPage(Number(this.provider.canvasIndex) + 1);
             }
         });
 
@@ -83,12 +84,12 @@ export class Extension extends baseExtension.BaseExtension {
             this.viewPage(index);
         });
 
-        $.subscribe(treeView.TreeView.VIEW_STRUCTURE, (e, structure: any) => {
-            this.viewStructure(structure);
+        $.subscribe(treeView.TreeView.VIEW_MANIFEST, (e, manifest: any) => {
+            this.viewManifest(manifest);
         });
 
-        $.subscribe(treeView.TreeView.VIEW_SECTION, (e, section: any) => {
-            this.viewSection(section.path);
+        $.subscribe(treeView.TreeView.VIEW_STRUCTURE, (e, structure: any) => {
+            this.viewStructure(structure.path);
         });
 
         $.subscribe(thumbsView.ThumbsView.THUMB_SELECTED, (e, index: number) => {
@@ -100,14 +101,14 @@ export class Extension extends baseExtension.BaseExtension {
         });
 
         $.subscribe(center.SeadragonCenterPanel.PREV, (e) => {
-            if (this.currentAssetIndex != 0) {
-                this.viewPage(Number(this.currentAssetIndex) - 1);
+            if (this.provider.canvasIndex != 0) {
+                this.viewPage(Number(this.provider.canvasIndex) - 1);
             }
         });
 
         $.subscribe(center.SeadragonCenterPanel.NEXT, (e) => {
-            if (this.currentAssetIndex != this.provider.assetSequence.assets.length - 1) {
-                this.viewPage(Number(this.currentAssetIndex) + 1);
+            if (this.provider.canvasIndex != this.provider.getTotalCanvases() - 1) {
+                this.viewPage(Number(this.provider.canvasIndex) + 1);
             }
         });
 
@@ -123,13 +124,13 @@ export class Extension extends baseExtension.BaseExtension {
 
             that.setParams();
 
-            var assetIndex;
+            var canvasIndex;
 
             if (!that.provider.isReload){
-                assetIndex = parseInt(that.getParam(baseProvider.params.assetIndex)) || 0;
+                canvasIndex = parseInt(that.getParam(baseProvider.params.canvasIndex)) || 0;
             }
 
-            that.viewPage(assetIndex || 0);
+            that.viewPage(canvasIndex || 0);
 
             // initial sizing
             $.publish(baseExtension.BaseExtension.RESIZE);
@@ -168,60 +169,37 @@ export class Extension extends baseExtension.BaseExtension {
     setParams(): void{
         if (!this.provider.isHomeDomain) return;
 
-        // set assetSequenceIndex hash param.
-        this.setParam(baseProvider.params.assetSequenceIndex, this.provider.assetSequenceIndex);
+        // set sequenceIndex hash param.
+        this.setParam(baseProvider.params.sequenceIndex, this.provider.sequenceIndex);
     }
 
     isLeftPanelEnabled(): boolean{
         return  utils.Utils.getBool(this.provider.config.options.leftPanelEnabled, true)
-                && this.provider.assetSequence.assets.length > 1;
+                && this.provider.isMultiCanvas();
     }
 
-    viewPage(assetIndex: number): void {
-        this.viewAsset(assetIndex, () => {
+    viewPage(canvasIndex: number): void {
+        this.viewCanvas(canvasIndex, () => {
 
-            var asset = this.provider.assetSequence.assets[assetIndex];
+            var canvas = this.provider.getCanvasByIndex(canvasIndex);
 
-            var dziUri = (<provider.Provider>this.provider).getDziUri(asset);
+            var uri = (<ISeadragonProvider>this.provider).getImageUri(canvas);
 
-            $.publish(Extension.OPEN_MEDIA, [dziUri]);
+            $.publish(Extension.OPEN_MEDIA, [uri]);
 
-            this.setParam(baseProvider.params.assetIndex, assetIndex);
+            this.setParam(baseProvider.params.canvasIndex, canvasIndex);
         });
-    }
-
-    viewSection(path: string): void {
-
-        var index = this.getSectionIndex(path);
-
-        this.viewPage(index);
-    }
-
-    viewLabel(label: string): void {
-
-        if (!label) {
-            this.showDialogue(this.provider.config.modules.genericDialogue.content.emptyValue);
-            return;
-        }
-
-        var index = this.getAssetIndexByOrderLabel(label);
-
-        if (index != -1) {
-            this.viewPage(index);
-        } else {
-            this.showDialogue(this.provider.config.modules.genericDialogue.content.pageNotFound);
-        }
     }
 
     getMode(): string {
         if (Extension.mode) return Extension.mode;
 
-        switch (this.provider.type) {
+        switch (this.provider.getManifestType()) {
             case 'monograph':
                 return Extension.PAGE_MODE;
                 break;
-            case 'archive':
-            case 'boundmanuscript':
+            case 'archive',
+                 'boundmanuscript':
                 return Extension.IMAGE_MODE;
                 break;
             default:
@@ -238,5 +216,28 @@ export class Extension extends baseExtension.BaseExtension {
         if (bounds) return this.centerPanel.serialiseBounds(bounds);
 
         return "";
+    }
+
+    viewStructure(path: string): void {
+
+        var index = this.provider.getStructureIndex(path);
+
+        this.viewPage(index);
+    }
+
+    viewLabel(label: string): void {
+
+        if (!label) {
+            this.showDialogue(this.provider.config.modules.genericDialogue.content.emptyValue);
+            return;
+        }
+
+        var index = this.provider.getCanvasIndexByOrderLabel(label);
+
+        if (index != -1) {
+            this.viewPage(index);
+        } else {
+            this.showDialogue(this.provider.config.modules.genericDialogue.content.pageNotFound);
+        }
     }
 }

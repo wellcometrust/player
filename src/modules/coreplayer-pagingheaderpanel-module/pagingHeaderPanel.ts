@@ -39,13 +39,13 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
     }
 
     create(): void {
-        
+
         this.setConfig('pagingHeaderPanel');
-        
+
         super.create();
 
-        $.subscribe(baseExtension.BaseExtension.ASSET_INDEX_CHANGED, (e, assetIndex) => {
-            this.assetIndexChanged(assetIndex);
+        $.subscribe(baseExtension.BaseExtension.CANVAS_INDEX_CHANGED, (e, canvasIndex) => {
+            this.canvasIndexChanged(canvasIndex);
         });
 
         $.subscribe(extension.Extension.MODE_CHANGED, (e, mode) => {
@@ -60,7 +60,7 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
 
         this.$prevButton = $('<a class="imageButton prev"></a>');
         this.$prevOptions.append(this.$prevButton);
-        
+
         this.$modeOptions = $('<div class="mode"></div>');
         this.$centerOptions.append(this.$modeOptions);
 
@@ -73,22 +73,22 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
         this.$modeOptions.append(this.$pageModeLabel);
         this.$pageModeOption = $('<input type="radio" id="page" name="mode"></input>');
         this.$modeOptions.append(this.$pageModeOption);
-        
+
         this.$search = $('<div class="search"></div>');
         this.$centerOptions.append(this.$search);
-        
+
         this.$searchText = $('<input class="searchText" maxlength="5" type="text"></input>');
         this.$search.append(this.$searchText);
-        
+
         this.$total = $('<span class="total"></span>');
         this.$search.append(this.$total);
-        
+
         this.$searchButton = $('<a class="imageButton go"></a>');
         this.$search.append(this.$searchButton);
-        
+
         this.$nextOptions = $('<div class="nextOptions"></div>');
         this.$centerOptions.append(this.$nextOptions);
-        
+
         this.$nextButton = $('<a class="imageButton next"></a>');
         this.$nextOptions.append(this.$nextButton);
 
@@ -111,7 +111,7 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
         this.setTotal();
 
         // check if the book has more than one page, otherwise hide prev/next options.
-        if (this.provider.assetSequence.assets.length == 1) {
+        if (this.provider.getTotalCanvases() == 1) {
             this.$centerOptions.hide();
         }
 
@@ -152,7 +152,7 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
                 // not found dialogue.
                 setTimeout(() => {
                     this.search();
-                }, 1);                
+                }, 1);
             }
         });
 
@@ -200,21 +200,24 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
         var of = this.content.of;
 
         if ((<ISeadragonExtension>this.extension).getMode() === extension.Extension.PAGE_MODE) {
-            this.$total.html(String.prototype.format(of, this.extension.getLastAssetOrderLabel()));
+            this.$total.html(String.prototype.format(of, this.provider.getLastCanvasOrderLabel()));
         } else {
-            this.$total.html(String.prototype.format(of, this.provider.assetSequence.assets.length));
+            this.$total.html(String.prototype.format(of, this.provider.getTotalCanvases()));
         }
     }
 
     setSearchPlaceholder(index): void {
 
-        var asset = this.extension.getAssetByIndex(index);
+        var canvas = this.provider.getCanvasByIndex(index);
 
         if ((<ISeadragonExtension>this.extension).getMode() === extension.Extension.PAGE_MODE) {
-            if (asset.orderLabel.trim() === "-") {
+
+            var orderLabel = this.provider.getCanvasOrderLabel(canvas);
+
+            if (orderLabel === "-") {
                 this.$searchText.val("");
             } else {
-                this.$searchText.val(asset.orderLabel);
+                this.$searchText.val(orderLabel);
             }
         } else {
             index++;
@@ -243,7 +246,7 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
                 return;
             }
 
-            var asset = this.extension.getAssetByIndex(index);
+            var asset = this.provider.getCanvasByIndex(index);
 
             if (!asset){
                 this.extension.showDialogue(this.provider.config.modules.genericDialogue.content.pageNotFound);
@@ -255,12 +258,12 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
         }
     }
 
-    assetIndexChanged(index): void {
+    canvasIndexChanged(index): void {
         this.setSearchPlaceholder(index);
     }
 
     modeChanged(mode): void {
-        this.setSearchPlaceholder(this.extension.currentAssetIndex);
+        this.setSearchPlaceholder(this.provider.canvasIndex);
         this.setTitles();
         this.setTotal();
     }

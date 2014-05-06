@@ -44,13 +44,15 @@ require([
     'yepnope',
     'yepnopecss',
     'bootstrapper',
-	'l10n',
-	'extensions/wellcomeplayer-seadragon-extension/extension',
+    'l10n',
+    'extensions/wellcomeplayer-seadragon-extension/extension',
+    'extensions/wellcomeplayer-seadragon-extension/iiifProvider',
     'extensions/wellcomeplayer-seadragon-extension/provider',
     'extensions/wellcomeplayer-mediaelement-extension/extension',
     'extensions/wellcomeplayer-mediaelement-extension/provider',
-	'extensions/wellcomeplayer-pdf-extension/extension',
-    'extensions/wellcomeplayer-pdf-extension/provider'],
+    'extensions/wellcomeplayer-pdf-extension/extension',
+    'extensions/wellcomeplayer-pdf-extension/provider'
+    ],
     ($,
     plugins,
     _,
@@ -61,6 +63,7 @@ require([
     bootstrapper,
     l10n,
     seadragonExtension,
+    seadragonIIIFProvider,
     seadragonProvider,
     mediaelementExtension,
     mediaelementProvider,
@@ -74,6 +77,13 @@ require([
         extensions['seadragon/dzi'] = {
             type: seadragonExtension.Extension,
             provider: seadragonProvider.Provider,
+            config: 'extensions/wellcomeplayer-seadragon-extension/config.js',
+            css: 'extensions/wellcomeplayer-seadragon-extension/css/styles.css'
+        };
+
+        extensions['seadragon/iiif'] = {
+            type: seadragonExtension.Extension,
+            provider: seadragonIIIFProvider.Provider,
             config: 'extensions/wellcomeplayer-seadragon-extension/config.js',
             css: 'extensions/wellcomeplayer-seadragon-extension/css/styles.css'
         };

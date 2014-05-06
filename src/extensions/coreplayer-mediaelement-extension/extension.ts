@@ -53,9 +53,8 @@ export class Extension extends baseExtension.BaseExtension{
             $.publish(baseExtension.BaseExtension.TOGGLE_FULLSCREEN);
         });
 
-        $.subscribe(treeView.TreeView.VIEW_STRUCTURE, (e, structure: any) => {
-
-            this.viewStructure(structure);
+        $.subscribe(treeView.TreeView.VIEW_MANIFEST, (e, manifest: any) => {
+            this.viewManifest(manifest);
         });
 
         $.subscribe(footer.FooterPanel.EMBED, (e) => {
@@ -107,26 +106,25 @@ export class Extension extends baseExtension.BaseExtension{
     setParams(): void{
         if (!this.provider.isHomeDomain) return;
 
-        // set assetSequenceIndex hash param.
-        this.setParam(baseProvider.params.assetSequenceIndex, this.provider.assetSequenceIndex);
+        // set sequenceIndex hash param.
+        this.setParam(baseProvider.params.sequenceIndex, this.provider.sequenceIndex);
     }
 
     isLeftPanelEnabled(): boolean{
         return  utils.Utils.getBool(this.provider.config.options.leftPanelEnabled, true)
-                && this.provider.pkg.assetSequences.length > 1;
+                && this.provider.isMultiSequence();
     }
 
     viewMedia(): void {
-        var asset = this.getAssetByIndex(0);
+        var canvas = this.provider.getCanvasByIndex(0);
 
-        this.viewAsset(0, () => {
+        this.viewCanvas(0, () => {
 
+            this.provider.setMediaUri(canvas);
 
-            asset.fileUri = (<provider.Provider>this.provider).getMediaUri(asset.fileUri);
+            $.publish(Extension.OPEN_MEDIA, [canvas]);
 
-            $.publish(Extension.OPEN_MEDIA, [asset]);
-
-            this.setParam(baseProvider.params.assetIndex, 0);
+            this.setParam(baseProvider.params.canvasIndex, 0);
         });
     }
 }

@@ -2,10 +2,12 @@
 /// <reference path="../../js/extensions.d.ts" />
 import utils = require("../../utils");
 import IProvider = require("./iProvider");
+import TreeNode = require("./treeNode");
+import Thumb = require("./thumb");
 
 export enum params {
-    assetSequenceIndex,
-    assetIndex,
+    sequenceIndex,
+    canvasIndex,
     zoom
 }
 
@@ -15,22 +17,24 @@ export enum params {
 // for extensions to operate against.
 export class BaseProvider implements IProvider{
 
+    canvasIndex: number;
     config: any;
-    pkg: any;
-    assetSequenceIndex: number;
-    assetSequence: any;
-    type: string;
-    dataUri: string;
-    isHomeDomain: boolean;
-    isOnlyInstance: boolean;
-    embedScriptUri: string;
-    isReload: boolean;
     configExtension: string;
+    dataUri: string;
     domain: string;
+    embedScriptUri: string;
+    isHomeDomain: boolean;
     isLightbox: boolean;
+    isOnlyInstance: boolean;
+    isReload: boolean;
+    manifest: any;
+    sequence: any;
+    sequenceIndex: number;
+    sectionsRootNode: TreeNode;
+    treeRoot: TreeNode;
 
     // map param names to enum indexes.
-    static paramMap: string[] = ['asi', 'ai', 'z'];
+    paramMap: string[] = ['asi', 'ai', 'z'];
 
     options: any = {
         thumbsUriTemplate: "{0}{1}",
@@ -38,9 +42,9 @@ export class BaseProvider implements IProvider{
         mediaUriTemplate: "{0}{1}"
     };
 
-    constructor(config: any, pkg: any) {
+    constructor(config: any, manifest: any) {
         this.config = config;
-        this.pkg = pkg;
+        this.manifest = manifest;
 
         // add dataBaseUri to options so it can be overridden.
         this.options.dataBaseUri = utils.Utils.getQuerystringParameter('dbu');
@@ -56,7 +60,7 @@ export class BaseProvider implements IProvider{
         this.isLightbox = utils.Utils.getQuerystringParameter('lb') === "true";
 
         if (this.isHomeDomain && !this.isReload){
-            this.assetSequenceIndex = parseInt(utils.Utils.getHashParameter(BaseProvider.paramMap[params.assetSequenceIndex], parent.document));
+            this.sequenceIndex = parseInt(utils.Utils.getHashParameter(this.paramMap[params.sequenceIndex], parent.document));
 
         // check for legacy format params (wellcome branch only).
         if (!this.assetSequenceIndex){
@@ -66,48 +70,49 @@ export class BaseProvider implements IProvider{
             }
         }
 
-        if (!this.assetSequenceIndex){
-            this.assetSequenceIndex = parseInt(utils.Utils.getQuerystringParameter(BaseProvider.paramMap[params.assetSequenceIndex])) || 0;
+        if (!this.sequenceIndex){
+            this.sequenceIndex = parseInt(utils.Utils.getQuerystringParameter(this.paramMap[params.sequenceIndex])) || 0;
         }
+
+        // nothing selected yet.
+        this.canvasIndex = -1;
 
         this.load();
     }
 
     load(): void{
-        // we know that this assetSequence exists because the bootstrapper
+        // we know that this sequence exists because the bootstrapper
         // will have loaded it already.
-        this.assetSequence = this.pkg.assetSequences[this.assetSequenceIndex];
+        this.sequence = this.manifest.assetSequences[this.sequenceIndex];
 
-        // replace all ref assetSequences with an object that can store
+        // replace all ref sequences with an object that can store
         // its path and sub structures. they won't get used for anything
         // else without a reload.
-        for (var i = 0; i < this.pkg.assetSequences.length; i++) {
-            if (this.pkg.assetSequences[i].$ref) {
-                this.pkg.assetSequences[i] = {};
+        for (var i = 0; i < this.manifest.assetSequences.length; i++) {
+            if (this.manifest.assetSequences[i].$ref) {
+                this.manifest.assetSequences[i] = {};
             }
         }
 
-        this.type = this.getRootSection().sectionType.toLowerCase();
-
-        if (this.pkg.rootStructure) {
-            this.parseStructures(this.pkg.rootStructure, this.pkg.assetSequences, '');
+        if (this.manifest.rootStructure) {
+            this.parseManifest();
         }
 
-        this.parseSections(this.getRootSection(), this.assetSequence.assets, '');
+        this.parseStructure();
     }
 
     reload(callback: any): void {
 
-        var packageUri = this.dataUri;
+        var manifestUri = this.dataUri;
 
         if (this.options.dataBaseUri){
-            packageUri = this.options.dataBaseUri + this.dataUri;
+            manifestUri = this.options.dataBaseUri + this.dataUri;
         }
 
-        packageUri += "?t=" + utils.Utils.getTimeStamp();
+        manifestUri = this.addTimestamp(manifestUri);
 
-        window.pkgCallback = (data: any) => {
-            this.pkg = data;
+        window.manifestCallback = (data: any) => {
+            this.manifest = data;
 
             this.load();
 
@@ -115,105 +120,356 @@ export class BaseProvider implements IProvider{
         };
 
         $.ajax({
-            url: packageUri,
+            url: manifestUri,
             type: 'GET',
             dataType: 'jsonp',
             jsonp: 'callback',
-            jsonpCallback: 'pkgCallback'
+            jsonpCallback: 'manifestCallback'
         });
     }
 
-    // the purpose of this is to give each asset in assetSequence.assets
-    // a collection of sections it belongs to.
-    // it also builds a path string property for each section.
-    // this can then be used when a section is clicked in the tree view
-    // where getSectionIndex in baseExtension loops though all assets and their
-    // associated sections until it finds one with a matching path.
-    parseSections(section: any, assets: any[], path: string): void {
-
-        section.path = path;
-
-        // replace SectionType with config.js mapping (if exists).
-        section.sectionType = this.replaceSectionType(section.sectionType);
-
-        for (var i = 0; i < section.assets.length; i++) {
-            var index = section.assets[i];
-
-            var asset = assets[index];
-
-            if (!asset.sections) asset.sections = [];
-
-            asset.sections.push(section);
-        }
-
-        if (section.sections) {
-            for (var j = 0; j < section.sections.length; j++) {
-                this.parseSections(section.sections[j], assets, path + '/' + j);
-            }
-        }
+    getManifestType(): string{
+        return this.getRootStructure().sectionType.toLowerCase();
     }
 
-    parseStructures(structure: any, assetSequences: any[], path: string): void {
-
-        structure.path = path;
-
-        if (typeof(structure.assetSequence) != 'undefined') {
-
-            var assetSequence = assetSequences[structure.assetSequence];
-
-            assetSequence.index = structure.assetSequence;
-            assetSequence.structure = structure;
-
-            // replace index with actual object ref.
-            structure.assetSequence = assetSequence;
-        }
-
-        if (structure.structures) {
-            for (var j = 0; j < structure.structures.length; j++) {
-                this.parseStructures(structure.structures[j], assetSequences, path + '/' + j);
-            }
-        }
+    getSequenceType(): string{
+        return this.sequence.assetType.replace('/', '-');
     }
 
-    replaceSectionType(sectionType: string): string {
-        if (this.config.options.sectionMappings && this.config.options.sectionMappings[sectionType]) {
-            return this.config.options.sectionMappings[sectionType];
-        }
-
-        return sectionType;
-    }
-
-    getRootSection(): any {
-        return this.assetSequence.rootSection;
+    getRootStructure(): any {
+        return this.sequence.rootSection;
     }
 
     getTitle(): string {
-        return this.getRootSection().title;
+        return this.getRootStructure().title;
     }
 
     getSeeAlso(): any {
-        return this.assetSequence.seeAlso;
+        return this.sequence.seeAlso;
     }
 
-    getMediaUri(fileUri: string): string{
+    isSeeAlsoEnabled(): boolean{
+        return this.config.options.seeAlsoEnabled !== false;
+    }
+
+    getCanvasByIndex(index: number): any {
+        return this.sequence.assets[index];
+    }
+
+    getCurrentCanvas(): any {
+        return this.sequence.assets[this.canvasIndex];
+    }
+
+    getTotalCanvases(): number{
+        return this.sequence.assets.length;
+    }
+
+    isMultiCanvas(): boolean{
+        return this.sequence.assets.length > 1;
+    }
+
+    isMultiSequence(): boolean{
+        return this.manifest.assetSequences.length > 1;
+    }
+
+    getMediaUri(mediaUri: string): string{
         var baseUri = this.options.mediaBaseUri || "";
         var template = this.options.mediaUriTemplate;
-        var uri = String.prototype.format(template, baseUri, fileUri);
+        var uri = String.prototype.format(template, baseUri, mediaUri);
 
         return uri;
     }
 
-    getThumbUri(asset: any, thumbsBaseUri?: string, thumbsUriTemplate?: string): string {
+    setMediaUri(canvas: any): void{
+        canvas.mediaUri = this.getMediaUri(canvas.mediaUri);
+    }
+
+    getThumbUri(canvas: any, thumbsBaseUri?: string, thumbsUriTemplate?: string): string {
         var baseUri = thumbsBaseUri ? thumbsBaseUri : this.options.thumbsBaseUri || this.options.dataBaseUri || "";
         var template = thumbsUriTemplate? thumbsUriTemplate : this.options.thumbsUriTemplate;
-        var uri = String.prototype.format(template, baseUri, asset.thumbnailPath);
+        var uri = String.prototype.format(template, baseUri, canvas.thumbnailPath);
 
         if (this.options.timestampUris) uri = this.addTimestamp(uri);
 
         return uri;
     }
 
+    parseManifest(): void{
+        this.parseManifestation(this.manifest.rootStructure, this.manifest.assetSequences, '');
+    }
+
+    // manifestations are called "structures" in the legacy format.
+    parseManifestation(structure: any, sequences: any[], path: string): void {
+
+        structure.path = path;
+
+        if (typeof(structure.assetSequence) != 'undefined') {
+
+            var sequence = sequences[structure.assetSequence];
+
+            sequence.index = structure.sequence;
+            sequence.structure = structure;
+            structure.sequence = sequence;
+        }
+
+        if (structure.structures) {
+            for (var j = 0; j < structure.structures.length; j++) {
+                this.parseManifestation(structure.structures[j], sequences, path + '/' + j);
+            }
+        }
+    }
+
+    parseStructure(): void{
+        this.parseStructures(this.getRootStructure(), this.sequence.assets, '');
+    }
+
+    // the purpose of this is to give each asset in assetSequence.assets
+    // a collection of structures it belongs to.
+    // it also builds a path string property for each section.
+    // this can then be used when a section is clicked in the tree view
+    // where getSectionIndex in baseExtension loops though all assets and their
+    // associated structures until it finds one with a matching path.
+    // (structures/ranges in iiif are called structures in the legacy format)
+    parseStructures(structure: any, canvases: any[], path: string): void {
+
+        structure.path = path;
+
+        // replace structureType with config.js mapping (if exists).
+        structure.structureType = this.replaceStructureType(structure.sectionType);
+
+        for (var i = 0; i < structure.assets.length; i++) {
+            var index = structure.assets[i];
+
+            var canvas = canvases[index];
+
+            if (!canvas.structures) canvas.structures = [];
+
+            canvas.structures.push(structure);
+        }
+
+        if (structure.sections) {
+            for (var j = 0; j < structure.sections.length; j++) {
+                this.parseStructures(structure.sections[j], canvases, path + '/' + j);
+            }
+        }
+    }
+
+    replaceStructureType(structureType: string): string {
+        if (this.config.options.sectionMappings && this.config.options.sectionMappings[structureType]) {
+            return this.config.options.sectionMappings[structureType];
+        }
+
+        return structureType;
+    }
+
+    getStructureByCanvasIndex(index: number): any {
+
+        var canvas = this.getCanvasByIndex(index);
+
+        return this.getCanvasStructure(canvas);
+    }
+
+    getStructureByIndex(structure: any, index: number): any{
+        return structure.sections[index];
+    }
+
+    getCanvasStructure(canvas: any): any {
+        // get the deepest structure that this file belongs to.
+        return canvas.structures.last();
+    }
+
+    getCanvasOrderLabel(canvas: any): string{
+        return canvas.orderLabel.trim();
+    }
+
+    getLastCanvasOrderLabel(): string {
+
+        // get the last orderlabel that isn't empty or '-'.
+        for (var i = this.sequence.assets.length - 1; i >= 0; i--) {
+            var canvas = this.sequence.assets[i];
+
+            var regExp = /\d/;
+
+            if (regExp.test(canvas.orderLabel)) {
+                return canvas.orderLabel;
+            }
+        }
+
+        // none exists, so return '-'.
+        return '-';
+    }
+
+    getStructureIndex(path: string): number {
+
+        for (var i = 0; i < this.sequence.assets.length; i++) {
+            var canvas = this.sequence.assets[i];
+            for (var j = 0; j < canvas.structures.length; j++) {
+                var section = canvas.structures[j];
+
+                if (section.path == path) {
+                    return i;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    getCanvasIndexByOrderLabel(label: string): number {
+
+        // label value may be double-page e.g. 100-101 or 100_101 or 100 101 etc
+        var regExp = /(\d*)\D*(\d*)|(\d*)/;
+        var match = regExp.exec(label);
+
+        var labelPart1 = match[1];
+        var labelPart2 = match[2];
+
+        if (!labelPart1) return -1;
+
+        var searchRegExp, regStr;
+
+        if (labelPart2) {
+            regStr = "^" + labelPart1 + "\\D*" + labelPart2 + "$";
+        } else {
+            regStr = "\\D*" + labelPart1 + "\\D*";
+        }
+
+        searchRegExp = new RegExp(regStr);
+
+        // loop through files, return first one with matching orderlabel.
+        for (var i = 0; i < this.sequence.assets.length; i++) {
+            var canvas = this.sequence.assets[i];
+
+            if (searchRegExp.test(canvas.orderLabel)) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    getManifestSeeAlsoUri(manifest: any): string{
+        if (manifest.seeAlso && manifest.seeAlso.tag && manifest.seeAlso.data){
+            if (manifest.seeAlso.tag === 'OpenExternal'){
+                return this.getMediaUri(manifest.seeAlso.data);
+            }
+        }
+    }
+
     addTimestamp(uri: string): string{
         return uri + "?t=" + utils.Utils.getTimeStamp();
+    }
+
+    isDeepLinkingEnabled(): boolean {
+        return (this.isHomeDomain && this.isOnlyInstance);
+    }
+
+    getTree(): TreeNode{
+        this.treeRoot = new TreeNode('root');
+
+        var rootStructure = this.manifest.rootStructure;
+
+        if (rootStructure) {
+            this.parseTreeStructure(this.treeRoot, rootStructure);
+        }
+
+        // if there aren't any structures then the sectionsRootNode won't have been created.
+        if (!this.sectionsRootNode) this.sectionsRootNode = this.treeRoot;
+
+        if (this.sequence.rootSection.sections){
+            for (var i = 0; i < this.sequence.rootSection.sections.length; i++) {
+                var section = this.sequence.rootSection.sections[i];
+
+                var childNode = new TreeNode();
+                this.sectionsRootNode.nodes.push(childNode);
+
+                this.parseTreeSection(childNode, section);
+            }
+        }
+
+        return this.treeRoot;
+    }
+
+    parseTreeStructure(node: TreeNode, structure: any): void {
+        node.label = structure.name || "root";
+        node.type = "manifest";
+        node.ref = structure;
+        structure.treeNode = node;
+        node.path = node.ref.path;
+
+        // if this is the structure node that contains the assetSequence.
+        if (this.sequence.structure == structure) {
+            this.sectionsRootNode = node;
+            this.sectionsRootNode.selected = true;
+            this.sectionsRootNode.expanded = true;
+        }
+
+        if (structure.structures) {
+
+            for (var i = 0; i < structure.structures.length; i++) {
+                var childStructure = structure.structures[i];
+
+                var childNode = new TreeNode();
+                node.nodes.push(childNode);
+
+                this.parseTreeStructure(childNode, childStructure);
+            }
+        }
+    }
+
+    parseTreeSection(node: TreeNode, section: any): void {
+        node.label = section.sectionType;
+        node.type = "structure";
+        node.ref = section;
+        section.treeNode = node;
+        node.path = node.ref.path;
+
+        if (section.sections) {
+
+            for (var i = 0; i < section.sections.length; i++) {
+                var childSection = section.sections[i];
+
+                var childNode = new TreeNode();
+                node.nodes.push(childNode);
+
+                this.parseTreeSection(childNode, childSection);
+            }
+        }
+    }
+
+    getThumbs(): Array<Thumb> {
+
+        var that = this;
+        var thumbs = new Array<Thumb>();
+
+        for (var i = 0; i < this.getTotalCanvases(); i++) {
+            var canvas = this.sequence.assets[i];
+
+            var uri = this.getThumbUri(canvas);
+            var structure = this.getCanvasStructure(canvas);
+
+            var heightRatio = canvas.height / canvas.width;
+            var height = 150;
+
+            if (heightRatio){
+                height = 90 * heightRatio;
+            }
+
+            var visible = true;
+
+            if (structure.extensions){
+                if (structure.extensions.authStatus.toLowerCase() !== "allowed"){
+                    visible = false;
+                }
+            }
+
+            if (canvas.orderLabel.trim() === "-") {
+                canvas.orderLabel = "";
+            }
+
+            thumbs.push(new Thumb(i, uri, canvas.orderLabel, height, visible));
+        }
+
+        return thumbs;
     }
 }
