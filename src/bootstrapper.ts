@@ -69,9 +69,10 @@ class BootStrapper{
                 if (!that.sequenceIndex){
                     that.sequenceIndex = parseInt(parent.document.location.hash.replace('#', '').split('/')[0]);
                 }
+            }
 
 
-            if (!that.assetSequenceIndex){
+            if (!that.sequenceIndex){
                 that.sequenceIndex = parseInt(utils.Utils.getQuerystringParameter(sequenceParam)) || 0;
             }
 

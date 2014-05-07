@@ -229,7 +229,6 @@ docReady(function() {
             dataBaseUri = $app.attr('data-baseuri');
             if (dataBaseUri) dataBaseUri = encodeURIComponent(dataBaseUri);
             dataUri = $app.attr('data-uri');
-            dataUri = encodeURIComponent(dataUri);
             sequenceIndex = $app.attr('data-sequenceindex') || $app.attr('data-assetsequenceindex');
             canvasIndex = $app.attr('data-canvasindex') || $app.attr('data-assetindex');
             zoom = $app.attr('data-zoom');
@@ -237,8 +236,8 @@ docReady(function() {
 
             // legacy params (wellcome branch only)
             if (!dataUri) dataUri = 'http://wellcomelibrary.org/package/' + $app.attr('data-id');
-            if (!assetSequenceIndex) assetSequenceIndex = $app.attr('data-manifestation');
-            if (!assetIndex) assetIndex = $app.attr('data-index');
+            if (!sequenceIndex) sequenceIndex = $app.attr('data-manifestation');
+            if (!canvasIndex) canvasIndex = $app.attr('data-index');
             if (!config) config = '/service/playerconfig';
 
             dataUri = encodeURIComponent(dataUri);

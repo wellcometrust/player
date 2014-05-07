@@ -63,10 +63,10 @@ export class BaseProvider implements IProvider{
             this.sequenceIndex = parseInt(utils.Utils.getHashParameter(this.paramMap[params.sequenceIndex], parent.document));
 
         // check for legacy format params (wellcome branch only).
-        if (!this.assetSequenceIndex){
+        if (!this.sequenceIndex){
                 var hash = parent.document.location.hash;
                 if (hash.startsWith('#/')) hash = hash.replace('#/', '#');
-                this.assetSequenceIndex = parseInt(hash.replace('#', '').split('/')[0]);
+                this.sequenceIndex = parseInt(hash.replace('#', '').split('/')[0]);
             }
         }
 
