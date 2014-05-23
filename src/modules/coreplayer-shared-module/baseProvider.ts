@@ -481,4 +481,8 @@ export class BaseProvider implements IProvider{
         var parts = utils.Utils.getUrlParts(this.dataUri);
         return parts.host;
     }
+
+    getMetaData(callback: (data: any) => any): void{
+        callback(null);
+    }
 }
