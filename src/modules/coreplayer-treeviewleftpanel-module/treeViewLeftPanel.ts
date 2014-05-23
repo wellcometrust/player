@@ -95,13 +95,11 @@ export class TreeViewLeftPanel extends baseLeft.LeftPanel {
         var type = this.provider.getManifestType();
 
         switch (type){
-            case 'archive',
-                 'boundmanuscript',
-                 'artwork',
-                 'application-pdf':
-                return false;
-            default:
-                return true;
+            case 'archive': return true;
+            case 'boundmanuscript': return true;
+            case 'artwork': return true;
+            case 'application-pdf': return true;
+            default: return false;
         }
     }
 
