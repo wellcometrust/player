@@ -84,6 +84,7 @@ export class TreeViewLeftPanel extends baseLeft.LeftPanel {
             if (!treeEnabled || !thumbsEnabled) this.$tabs.hide();
 
             if (thumbsEnabled && this.defaultToThumbsView()){
+                this.$tabs.hide();
                 this.openThumbsView();
             } else if (treeEnabled){
                 this.openTreeView();
