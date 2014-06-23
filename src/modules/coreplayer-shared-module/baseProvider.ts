@@ -484,6 +484,10 @@ export class BaseProvider implements IProvider{
         return parts.host;
     }
 
+    getEmbedDomain(): string{
+        return this.embedDomain;
+    }
+
     getMetaData(callback: (data: any) => any): void{
         callback(null);
     }
