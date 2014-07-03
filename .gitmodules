@@ -28,3 +28,6 @@
 [submodule "src/extensions/wellcomeplayer-pdf-extension"]
 	path = src/extensions/wellcomeplayer-pdf-extension
 	url = https://github.com/wellcomelibrary/wellcomeplayer-pdf-extension.git
+[submodule "src/modules/wellcomeplayer-treeviewleftpanel-module"]
+	path = src/modules/wellcomeplayer-treeviewleftpanel-module
+	url = https://github.com/wellcomelibrary/wellcomeplayer-treeviewleftpanel-module.git
