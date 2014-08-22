@@ -31,6 +31,8 @@ export class Extension extends baseExtension.BaseExtension {
     $embedDialogue: JQuery;
     embedDialogue: embed.EmbedDialogue;
 
+    currentRotation: number = 0;
+
     static mode: string;
 
     // events
@@ -96,6 +98,11 @@ export class Extension extends baseExtension.BaseExtension {
             this.setParam(baseProvider.params.zoom, this.centerPanel.serialiseBounds(this.centerPanel.currentBounds));
         });
 
+        $.subscribe(center.SeadragonCenterPanel.SEADRAGON_ROTATION, (e, rotation) => {
+            this.currentRotation = rotation;
+            this.setParam(baseProvider.params.rotation, rotation);
+        });
+
         $.subscribe(center.SeadragonCenterPanel.PREV, (e) => {
             if (this.provider.canvasIndex != 0) {
                 this.viewPage(Number(this.provider.canvasIndex) - 1);
@@ -147,7 +154,11 @@ export class Extension extends baseExtension.BaseExtension {
         }
 
         this.centerPanel = new center.SeadragonCenterPanel(shell.Shell.$centerPanel);
-        this.rightPanel = new right.MoreInfoRightPanel(shell.Shell.$rightPanel);
+
+        if (this.isRightPanelEnabled()){
+            this.rightPanel = new right.MoreInfoRightPanel(shell.Shell.$rightPanel);
+        }
+
         this.footerPanel = new footer.FooterPanel(shell.Shell.$footerPanel);
 
         this.$helpDialogue = utils.Utils.createDiv('overlay help');
@@ -161,6 +172,10 @@ export class Extension extends baseExtension.BaseExtension {
         if (this.isLeftPanelEnabled()){
             this.leftPanel.init();
         }
+
+        if (this.isRightPanelEnabled()){
+            this.rightPanel.init();
+        }
     }
 
     setParams(): void{
@@ -173,6 +188,10 @@ export class Extension extends baseExtension.BaseExtension {
     isLeftPanelEnabled(): boolean{
         return  utils.Utils.getBool(this.provider.config.options.leftPanelEnabled, true)
                 && this.provider.isMultiCanvas();
+    }
+
+    isRightPanelEnabled(): boolean{
+        return  utils.Utils.getBool(this.provider.config.options.rightPanelEnabled, true);
     }
 
     viewPage(canvasIndex: number): void {
@@ -213,6 +232,13 @@ export class Extension extends baseExtension.BaseExtension {
         if (bounds) return this.centerPanel.serialiseBounds(bounds);
 
         return "";
+    }
+
+    getViewerRotation(): number{
+
+        if (!this.centerPanel) return;
+
+        return this.currentRotation;
     }
 
     viewStructure(path: string): void {

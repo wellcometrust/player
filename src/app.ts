@@ -77,43 +77,37 @@ require([
         extensions['seadragon/dzi'] = {
             type: seadragonExtension.Extension,
             provider: seadragonProvider.Provider,
-            config: 'extensions/wellcomeplayer-seadragon-extension/config.js',
-            css: 'extensions/wellcomeplayer-seadragon-extension/css/styles.css'
+			name: 'wellcomeplayer-seadragon-extension'
         };
 
         extensions['seadragon/iiif'] = {
             type: seadragonExtension.Extension,
             provider: seadragonIIIFProvider.Provider,
-            config: 'extensions/wellcomeplayer-seadragon-extension/config.js',
-            css: 'extensions/wellcomeplayer-seadragon-extension/css/styles.css'
+			name: 'wellcomeplayer-seadragon-extension'
         };
 
         extensions['video/mp4'] = {
             type: mediaelementExtension.Extension,
             provider: mediaelementProvider.Provider,
-            config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
-            css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
+			name: 'wellcomeplayer-mediaelement-extension'
         };
 
         extensions['video/multiple-sources'] = {
             type: mediaelementExtension.Extension,
             provider: mediaelementProvider.Provider,
-            config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
-            css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
+			name: 'wellcomeplayer-mediaelement-extension'
         };
 
         extensions['audio/mp3'] = {
             type: mediaelementExtension.Extension,
             provider: mediaelementProvider.Provider,
-            config: 'extensions/wellcomeplayer-mediaelement-extension/config.js',
-            css: 'extensions/wellcomeplayer-mediaelement-extension/css/styles.css'
+			name: 'wellcomeplayer-mediaelement-extension'
         };
 
         extensions['application/pdf'] = {
             type: pdfExtension.Extension,
             provider: pdfProvider.Provider,
-            config: 'extensions/wellcomeplayer-pdf-extension/config.js',
-            css: 'extensions/wellcomeplayer-pdf-extension/css/styles.css'
+			name: 'wellcomeplayer-pdf-extension'
         };
 
         new bootstrapper(extensions);
