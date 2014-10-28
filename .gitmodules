@@ -4,6 +4,9 @@
 [submodule "src/themes/coreplayer-default-theme"]
 	path = src/themes/coreplayer-default-theme
 	url = https://github.com/wellcomelibrary/coreplayer-default-theme.git
+[submodule "tests"]
+	path = tests	
+	url = https://github.com/wellcomelibrary/player-tests.git
 [submodule "src/extensions/wellcomeplayer-mediaelement-extension"]
 	path = src/extensions/wellcomeplayer-mediaelement-extension
 	url = https://github.com/wellcomelibrary/wellcomeplayer-mediaelement-extension.git

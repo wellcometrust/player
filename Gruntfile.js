@@ -11,7 +11,8 @@ module.exports = function (grunt) {
             packageDirName: packageDirName,
             packageDir: 'build/' + packageDirName,
             examplesDir: 'examples',
-            theme: 'coreplayer-default-theme'
+            theme: 'coreplayer-default-theme',
+            port: '8001'
         },
         pkg: packageJson,
         ts: {
@@ -269,7 +270,7 @@ module.exports = function (grunt) {
         exec: {
             // concatenate and compress with r.js
             build: {
-                cmd: 'node tools/r.js -o baseUrl=src/ mainConfigFile=src/app.js name=app <%= global.minify %> out=<%= global.buildDir %>/js/app.js'
+                cmd: 'node lib/r.js -o baseUrl=src/ mainConfigFile=src/app.js name=app <%= global.minify %> out=<%= global.buildDir %>/js/app.js'
             }
         },
 
@@ -338,6 +339,20 @@ module.exports = function (grunt) {
                 },
                 files: getExtensionsConfig()
             }
+        },
+
+        connect: {
+            dev: {
+                options: {
+                    port: '<%= global.port %>',
+                    base: '.',
+                    directory: '.',
+                    keepalive: true,
+                    open: {
+                        target: 'http://localhost:<%= global.port %>/<%= global.examplesDir %>/'
+                    }
+                }
+            }
         }
     });
 
@@ -377,6 +392,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-text-replace');
     grunt.loadNpmTasks("grunt-contrib-compress");
     grunt.loadNpmTasks("grunt-extend");
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
     grunt.registerTask("default", '', function(){
 
@@ -444,6 +460,14 @@ module.exports = function (grunt) {
             'copy:package',
             'compress',
             'clean:package'
+        );
+    });
+
+    grunt.registerTask('serve', '', function() {
+
+        grunt.task.run(
+            'default',
+            'connect'
         );
     });
 
