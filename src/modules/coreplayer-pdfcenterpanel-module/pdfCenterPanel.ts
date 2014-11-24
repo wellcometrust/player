@@ -40,7 +40,7 @@ export class PDFCenterPanel extends baseCenter.CenterPanel {
             }).embed('content');
 
         } else {
-            
+
             var viewerPath;
 
             // todo: use compiler conditional
@@ -50,8 +50,12 @@ export class PDFCenterPanel extends baseCenter.CenterPanel {
                 viewerPath = 'html/coreplayer-pdfcenterpanel-module/viewer.html';
             }
 
+            //PDFView.initialBookmark = "page=10";
+            //PDFView.open(src + "/" + dest.file);
+
             // load viewer.html
             this.$content.load(viewerPath, () => {
+                // todo: use compiler flag when available
                 if (window.DEBUG){
                     PDFJS.workerSrc = 'extensions/coreplayer-pdf-extension/js/pdf.worker.min.js';
                 } else {

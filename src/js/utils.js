@@ -276,12 +276,12 @@ Object.size = function (obj) {
 
 function debounce(fn, debounceDuration) {
     // summary:
-    //      Returns a debounced function that will make sure the given 
+    //      Returns a debounced function that will make sure the given
     //      function is not triggered too much.
     // fn: Function
     //      Function to debounce.
     // debounceDuration: Number
-    //      OPTIONAL. The amount of time in milliseconds for which we 
+    //      OPTIONAL. The amount of time in milliseconds for which we
     //      will debounce the function. (defaults to 100ms)
 
     debounceDuration = debounceDuration || 100;
