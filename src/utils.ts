@@ -58,7 +58,22 @@ if (!Array.prototype.contains) {
     Array.prototype.contains = function (val: any){
         return this.indexOf(val) !== -1;
     };
-}
+};
+
+Array.prototype.remove = function (item) {
+    var index = this.indexOf(item);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
+
+Array.prototype.removeAt = function (index) {
+    this.splice(index, 1);
+};
+
+Array.prototype.insert = function (item, index) {
+    this.splice(index, 0, item);
+};
 
 //#endregion
 

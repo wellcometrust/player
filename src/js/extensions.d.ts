@@ -26,13 +26,16 @@ interface Array<T>{
     clone(): Array<T>;
     last(): any;
     contains(val: any): boolean;
+    remove(item: any): void;
+    removeAt(index: number): void;
+    insert(item: any, index: number): void;
 }
 
 interface JQuery {
     // plugins
     ellipsisFill(text: string): any;
     swapClass(removeClass: string, addClass: string): void;
-    targetBlank(): void;  
+    targetBlank(): void;
     verticalMargins(): number;
     horizontalMargins(): number;
     verticalPadding(): number;
