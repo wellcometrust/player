@@ -60,37 +60,22 @@ export class Extension extends baseExtension.BaseExtension{
             }
         });
 
-        // load dependencies
-
-//        // if in debug mode, map to extension's path
-//        if (window.DEBUG){
-//            _.values(dependencies)
-//        }
-//
-//        yepnope({
-//            load: ,
-//            complete: function () {
-//                that.createModules();
-//
-//                //this.setParams();
-//
-//                // initial sizing
-//                $.publish(baseExtension.BaseExtension.RESIZE);
-//
-//                that.viewMedia();
-//
-//                // publish created event
-//                $.publish(Extension.CREATED);
-//            }
-//        });
-
         // dependencies
         require(_.values(dependencies), function () {
             //var deps = _.object(_.keys(dependencies), arguments);
 
             that.createModules();
 
-            //this.setParams();
+            /*
+            this.setParams();
+
+            var canvasIndex;
+
+            if (!that.provider.isReload){
+                canvasIndex = parseInt(that.getParam(baseProvider.params.canvasIndex)) || 0;
+            }
+            */
+            //that.viewPage(canvasIndex || 0);
 
             // initial sizing
             $.publish(baseExtension.BaseExtension.RESIZE);
