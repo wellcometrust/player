@@ -16,6 +16,7 @@ export class EmbedDialogue extends embed.EmbedDialogue {
     formatCode(): void {
 
         this.code = (<IPDFProvider>this.provider).getEmbedScript(
+            this.provider.anchor,
             this.currentWidth,
             this.currentHeight,
             this.options.embedTemplate);

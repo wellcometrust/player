@@ -5,6 +5,7 @@ import Thumb = require("./thumb");
 // interacting with the data model.
 interface IProvider{
 	canvasIndex: number;
+    anchor: string;
 	config: any;
 	configExtension: string;
 	domain: string;

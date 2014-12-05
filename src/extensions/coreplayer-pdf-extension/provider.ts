@@ -20,7 +20,7 @@ export class Provider extends baseProvider.BaseProvider implements IPDFProvider{
         return canvas.mediaUri;
     }
 
-    getEmbedScript(width: number, height: number, embedTemplate: string): string{
+    getEmbedScript(anchor: string, width: number, height: number, embedTemplate: string): string{
 
         var esu = this.options.embedScriptUri || this.embedScriptUri;
 
@@ -28,6 +28,7 @@ export class Provider extends baseProvider.BaseProvider implements IPDFProvider{
 
         var configUri = this.config.uri || '';
 
+        // todo: to support anchors it needs to be updated as the pdf is scrolled.
         var script = String.prototype.format(template, this.dataUri, this.sequenceIndex, configUri, width, height, esu);
 
         return script;

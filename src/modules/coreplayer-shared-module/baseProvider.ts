@@ -8,6 +8,7 @@ import Thumb = require("./thumb");
 export enum params {
     sequenceIndex,
     canvasIndex,
+    anchor,
     zoom,
     rotation
 }
@@ -19,6 +20,7 @@ export enum params {
 export class BaseProvider implements IProvider{
 
     canvasIndex: number;
+    anchor: string;
     config: any;
     configExtension: string;
     dataUri: string;
@@ -36,7 +38,7 @@ export class BaseProvider implements IProvider{
     treeRoot: TreeNode;
 
     // map param names to enum indices.
-    paramMap: string[] = ['asi', 'ai', 'z', 'r'];
+    paramMap: string[] = ['asi', 'ai', 'a', 'z', 'r'];
 
     options: any = {
         thumbsUriTemplate: "{0}{1}",
@@ -64,6 +66,13 @@ export class BaseProvider implements IProvider{
 
         if (this.isHomeDomain && !this.isReload){
             this.sequenceIndex = parseInt(utils.Utils.getHashParameter(this.paramMap[params.sequenceIndex], parent.document));
+
+        // check for legacy format params (wellcome branch only).
+        if (!this.sequenceIndex){
+                var hash = parent.document.location.hash;
+                if (hash.startsWith('#/')) hash = hash.replace('#/', '#');
+                this.sequenceIndex = parseInt(hash.replace('#', '').split('/')[0]);
+            }
         }
 
         if (!this.sequenceIndex){
