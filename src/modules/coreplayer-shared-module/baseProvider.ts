@@ -20,6 +20,7 @@ export enum params {
 export class BaseProvider implements IProvider{
 
     canvasIndex: number;
+    anchor: string;
     config: any;
     configExtension: string;
     dataUri: string;

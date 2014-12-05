@@ -64,7 +64,7 @@ export class PDFCenterPanel extends baseCenter.CenterPanel {
 
                 PDFJS.DEFAULT_URL = canvas.mediaUri;
 
-                var anchorIndex = parseInt(that.getParam(baseProvider.params.anchor)) || 0;
+                var anchorIndex = parseInt(this.extension.getParam(baseProvider.params.anchor)) || 0;
 
                 PDFView.initialBookmark = "page=" + anchorIndex;
 

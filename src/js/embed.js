@@ -211,7 +211,7 @@ docReady(function() {
         }
 
         function app(element, isHomeDomain, isOnlyInstance) {
-            var socket, $app, $img, $appFrame, dataUri, sequenceIndex, canvasIndex, isLightbox, dataBaseUri, zoom, config, isFullScreen, height, top, left, lastScroll, reload;
+            var socket, $app, $img, $appFrame, dataUri, sequenceIndex, canvasIndex, anchor, isLightbox, dataBaseUri, zoom, config, isFullScreen, height, top, left, lastScroll, reload;
 
             $app = $(element);
 
@@ -234,6 +234,7 @@ docReady(function() {
             dataUri = $app.attr('data-uri');
             sequenceIndex = $app.attr('data-sequenceindex') || $app.attr('data-assetsequenceindex');
             canvasIndex = $app.attr('data-canvasindex') || $app.attr('data-assetindex');
+            anchor = $app.attr('data-anchor');
             zoom = $app.attr('data-zoom');
             config = $app.attr('data-config');
 
@@ -368,6 +369,7 @@ docReady(function() {
 
                 if (sequenceIndex) uri += "&asi=" + sequenceIndex;
                 if (canvasIndex) uri += "&ai=" + canvasIndex;
+                if (anchor) uri += "&a=" + anchor;
                 if (dataBaseUri) uri += "&dbu=" + dataBaseUri;
                 if (zoom) uri += "&z=" + zoom;
                 if (reload) uri += "&rl=true";
