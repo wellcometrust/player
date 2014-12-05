@@ -66,17 +66,6 @@ export class Extension extends baseExtension.BaseExtension{
 
             that.createModules();
 
-            /*
-            this.setParams();
-
-            var canvasIndex;
-
-            if (!that.provider.isReload){
-                canvasIndex = parseInt(that.getParam(baseProvider.params.canvasIndex)) || 0;
-            }
-            */
-            //that.viewPage(canvasIndex || 0);
-
             // initial sizing
             $.publish(baseExtension.BaseExtension.RESIZE);
 
