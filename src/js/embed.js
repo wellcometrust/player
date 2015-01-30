@@ -331,6 +331,10 @@ docReady(function() {
                 reload = true;
 
                 createSocket();
+
+                if (isFullScreen){
+                    triggerSocket('onToggleFullScreen');
+                }
             }
 
             function showLightbox(){
