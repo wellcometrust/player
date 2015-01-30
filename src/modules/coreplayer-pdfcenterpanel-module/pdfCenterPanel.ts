@@ -50,9 +50,6 @@ export class PDFCenterPanel extends baseCenter.CenterPanel {
                 viewerPath = 'html/coreplayer-pdfcenterpanel-module/viewer.html';
             }
 
-            //PDFView.initialBookmark = "page=10";
-            //PDFView.open(src + "/" + dest.file);
-
             // load viewer.html
             this.$content.load(viewerPath, () => {
                 // todo: use compiler flag when available

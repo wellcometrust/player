@@ -209,9 +209,9 @@ export class BaseExtension implements IExtension {
             window.open(seeAlsoUri, '_blank');
         } else {
             //this.viewSequence(manifest.sequence.index);
-            if (this.isFullScreen) {
-                $.publish(BaseExtension.TOGGLE_FULLSCREEN);
-            }
+            //if (this.isFullScreen) {
+            //    $.publish(BaseExtension.TOGGLE_FULLSCREEN);
+            //}
 
             this.triggerSocket(BaseExtension.SEQUENCE_INDEX_CHANGED, manifest.assetSequence);
         }

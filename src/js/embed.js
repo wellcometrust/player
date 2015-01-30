@@ -343,6 +343,10 @@ docReady(function() {
                 reload = true;
 
                 createSocket();
+
+                if (isFullScreen){
+                    triggerSocket('onToggleFullScreen');
+                }
             }
 
             function showLightbox(){
@@ -393,9 +397,6 @@ docReady(function() {
                         message = $.parseJSON(message);
 
                         switch (message.eventName) {
-                            case "onToggleFullScreen":
-                                toggleFullScreen(message.eventObject);
-                                break;
                             case "onToggleFullScreen":
                                 toggleFullScreen(message.eventObject);
                                 break;
