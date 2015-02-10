@@ -63,7 +63,7 @@ export class PDFCenterPanel extends baseCenter.CenterPanel {
 
                 var anchorIndex = (1 + parseInt(this.extension.getParam(baseProvider.params.anchor))) || 0;
 
-                PDFView.initialBookmark = "page=" + anchorIndex;
+                PDFView.initialBookmark = "page=" + anchorIndex + 1;
 
                 window.webViewerLoad();
 
