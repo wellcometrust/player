@@ -429,7 +429,7 @@ export class BaseProvider implements IProvider{
 
     // structures
     parseTreeSection(node: TreeNode, section: any): void {
-        node.label = section.sectionType;
+        node.label = section.title || section.sectionType;
         node.data = section;
         node.data.type = "structure";
         node.data.treeNode = node;
