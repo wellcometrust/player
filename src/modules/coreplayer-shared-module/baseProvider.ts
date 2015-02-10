@@ -500,6 +500,7 @@ export class BaseProvider implements IProvider{
 
         switch (manifestType){
             case 'monograph':
+            case 'manuscript':
                 if (!this.isMultiSequence()) return true;
                 break;
             case 'archive':
