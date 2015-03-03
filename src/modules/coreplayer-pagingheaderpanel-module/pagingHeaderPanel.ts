@@ -69,7 +69,15 @@ export class PagingHeaderPanel extends baseHeader.HeaderPanel {
         this.$imageModeOption = $('<input type="radio" id="image" name="mode"></input>');
         this.$modeOptions.append(this.$imageModeOption);
 
-        this.$pageModeLabel = $('<label for="page">' + this.content.page + '</label>');
+        var label;
+
+        if (this.provider.getManifestType() === "manuscript"){
+            label = this.content.folio;
+        } else {
+            label = this.content.page;
+        }
+
+        this.$pageModeLabel = $('<label for="page">' + label + '</label>');
         this.$modeOptions.append(this.$pageModeLabel);
         this.$pageModeOption = $('<input type="radio" id="page" name="mode"></input>');
         this.$modeOptions.append(this.$pageModeOption);
