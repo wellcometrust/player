@@ -324,31 +324,39 @@ export class BaseProvider implements IProvider{
     }
 
     getCanvasIndexByOrderLabel(label: string): number {
+        label = label.trim();
 
-        // label value may be double-page e.g. 100-101 or 100_101 or 100 101 etc
-        var regExp = /(\d*)\D*(\d*)|(\d*)/;
-        var match = regExp.exec(label);
-
-        var labelPart1 = match[1];
-        var labelPart2 = match[2];
-
-        if (!labelPart1) return -1;
-
-        var searchRegExp, regStr;
-
-        if (labelPart2) {
-            regStr = "^" + labelPart1 + "\\D*" + labelPart2 + "$";
-        } else {
-            regStr = "\\D*" + labelPart1 + "\\D*";
+        // trim any preceding zeros.
+        if ($.isNumeric(label)) {
+            label = parseInt(label, 10).toString();
         }
 
-        searchRegExp = new RegExp(regStr);
+        var doublePageRegExp = /(\d*)\D+(\d*)/;
+        var match, regExp, regStr, labelPart1, labelPart2;
 
-        // loop through files, return first one with matching orderlabel.
         for (var i = 0; i < this.sequence.assets.length; i++) {
             var canvas = this.sequence.assets[i];
 
-            if (searchRegExp.test(canvas.orderLabel)) {
+            // check if there's a literal match
+            if (canvas.orderLabel === label) {
+                return i;
+            }
+
+            // check if there's a match for double-page spreads e.g. 100-101, 100_101, 100 101
+            match = doublePageRegExp.exec(label);
+
+            if (!match) continue;
+
+            labelPart1 = match[1];
+            labelPart2 = match[2];
+
+            if (!labelPart2) continue;
+
+            regStr = "^" + labelPart1 + "\\D+" + labelPart2 + "$";
+
+            regExp = new RegExp(regStr);
+
+            if (regExp.test(canvas.orderLabel)) {
                 return i;
             }
         }
