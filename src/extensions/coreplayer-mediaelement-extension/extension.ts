@@ -15,7 +15,6 @@ import footer = require("../../modules/coreplayer-shared-module/footerPanel");
 import help = require("../../modules/coreplayer-dialogues-module/helpDialogue");
 import embed = require("./embedDialogue");
 import IProvider = require("../../modules/coreplayer-shared-module/iProvider");
-import dependencies = require("./dependencies");
 
 export class Extension extends baseExtension.BaseExtension{
 
@@ -39,7 +38,7 @@ export class Extension extends baseExtension.BaseExtension{
         super(provider);
     }
 
-    create(): void {
+    create(overrideDependencies?: any): void {
         super.create();
 
         var that = this;
@@ -62,8 +61,25 @@ export class Extension extends baseExtension.BaseExtension{
         });
 
         // dependencies
-        require(_.values(dependencies), function () {
-            //var deps = _.object(_.keys(dependencies), arguments);
+        if (overrideDependencies){
+            this.loadDependencies(overrideDependencies);
+        } else {
+            this.getDependencies((deps: any) => {
+                this.loadDependencies(deps);
+            });
+        }
+    }
+
+    getDependencies(callback: (deps: any) => void): any {
+        require(["./dependencies"], function (deps) {
+            callback(deps);
+        });
+    }
+
+    loadDependencies(deps: any): void {
+        var that = this;
+
+        require(_.values(deps), function () {
 
             that.createModules();
 

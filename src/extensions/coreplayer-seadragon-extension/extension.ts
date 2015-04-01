@@ -17,7 +17,6 @@ import help = require("../../modules/coreplayer-dialogues-module/helpDialogue");
 import embed = require("../../extensions/coreplayer-seadragon-extension/embedDialogue");
 import IProvider = require("../../modules/coreplayer-shared-module/iProvider");
 import ISeadragonProvider = require("./iSeadragonProvider");
-import dependencies = require("./dependencies");
 
 export class Extension extends baseExtension.BaseExtension {
 
@@ -120,9 +119,25 @@ export class Extension extends baseExtension.BaseExtension {
         });
 
         // dependencies
-        var deps = overrideDependencies || dependencies;
+        if (overrideDependencies){
+            this.loadDependencies(overrideDependencies);
+        } else {
+            this.getDependencies((deps: any) => {
+                this.loadDependencies(deps);
+            });
+        }
+    }
+
+    getDependencies(callback: (deps: any) => void): any {
+        require(["./dependencies"], function (deps) {
+            callback(deps);
+        });
+    }
+
+    loadDependencies(deps: any): void {
+        var that = this;
+
         require(_.values(deps), function () {
-            //var deps = _.object(_.keys(dependencies), arguments);
 
             that.createModules();
 
@@ -142,8 +157,6 @@ export class Extension extends baseExtension.BaseExtension {
             // publish created event
             $.publish(Extension.CREATED);
         });
-
-
     }
 
     createModules(): void{
