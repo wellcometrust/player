@@ -129,7 +129,7 @@ export class Extension extends baseExtension.BaseExtension {
     }
 
     getDependencies(callback: (deps: any) => void): any {
-        require(["./dependencies"], function (deps) {
+        require(["../../extensions/coreplayer-seadragon-extension/dependencies"], function (deps) {
             callback(deps);
         });
     }
