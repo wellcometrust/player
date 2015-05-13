@@ -326,9 +326,10 @@ export class BaseProvider implements IProvider{
     getCanvasIndexByOrderLabel(label: string): number {
         label = label.trim();
 
-        // trim any preceding zeros.
+        // trim any preceding zeros and default to recto.
         if ($.isNumeric(label)) {
             label = parseInt(label, 10).toString();
+            label += "r";
         }
 
         var doublePageRegExp = /(\d*)\D+(\d*)/;
