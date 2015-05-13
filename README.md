@@ -1,4 +1,4 @@
-# Wellcome Player
+#We recommend that developers now use: http://github.com/universalviewer
 
 Navigate sequences of images in a zoomable, extensible interface.
 
