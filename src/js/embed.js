@@ -294,6 +294,7 @@ docReady(function() {
                 isFullScreen = obj.isFullScreen;
 
                 if (obj.overrideFullScreen){
+                    jQuery(document).trigger('onToggleFullScreen', [obj.isFullScreen]);
                     return;
                 }
 
